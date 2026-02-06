@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Details - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <a href="{% url 'products:list' %}" class="btn btn-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+{% if product %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Product Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>Product Name</th>
+                        <td>{{ product.product_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>SKU</th>
+                        <td>{{ product.sku }}</td>
+                    </tr>
+                    <tr>
+                        <th>Barcode</th>
+                        <td>{{ product.barcode }}</td>
+                    </tr>
+                    <tr>
+                        <th>Category</th>
+                        <td>{{ product.category|default:'-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cost Price</th>
+                        <td>₹{{ product.cost_price }}</td>
+                    </tr>
+                    <tr>
+                        <th>Selling Price</th>
+                        <td>₹{{ product.selling_price }}</td>
+                    </tr>
+                    <tr>
+                        <th>Margin</th>
+                        <td>{% if margin is not None %}{{ margin }}%{% else %}-{% endif %}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Inventory Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>Quantity On Hand</th>
+                        <td>
+                            {% if product.quantity_on_hand > product.reorder_level %}
+                            <span class="badge bg-success">{{ product.quantity_on_hand }}</span>
+                            {% elif product.quantity_on_hand > 0 %}
+                            <span class="badge bg-warning">{{ product.quantity_on_hand }}</span>
+                            {% else %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Reorder Level</th>
+                        <td>{{ product.reorder_level }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            {% if product.quantity_on_hand > 0 %}
+                            <span class="badge bg-success">In Stock</span>
+                            {% else %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ product.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Created At</th>
+                        <td>{{ product.created_at }}</td>
+                    </tr>
+                    <tr>
+                        <th>Updated At</th>
+                        <td>{{ product.updated_at }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        {% if user_role in 'INVENTORY_MANAGER,ADMIN' %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <a href="{% url 'products:update' product.id %}" class="btn btn-warning w-100 mb-2">
+                    <i class="fas fa-edit"></i> Edit Product
+                </a>
+                <a href="{% url 'products:delete' product.id %}" class="btn btn-danger w-100" onclick="return confirm('Are you sure?')">
+                    <i class="fas fa-trash"></i> Delete Product
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="alert alert-danger">Product not found</div>
+{% endif %}
+{% endblock %}

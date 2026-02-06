@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Product - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-8">
+        <h1>Add New Product</h1>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'products:list' %}" class="btn btn-secondary float-end">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" class="needs-validation">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="product_name" class="form-label">Product Name *</label>
+                        <input type="text" class="form-control" id="product_name" name="product_name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="sku" class="form-label">SKU *</label>
+                        <input type="text" class="form-control" id="sku" name="sku" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="barcode" class="form-label">Barcode</label>
+                        <input type="text" class="form-control" id="barcode" name="barcode">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Grocery">Grocery</option>
+                            <option value="Clothing">Clothing</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="cost_price" class="form-label">Cost Price *</label>
+                        <input type="number" class="form-control" id="cost_price" name="cost_price" step="0.01" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="selling_price" class="form-label">Selling Price *</label>
+                        <input type="number" class="form-control" id="selling_price" name="selling_price" step="0.01" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="quantity_on_hand" class="form-label">Quantity on Hand *</label>
+                        <input type="number" class="form-control" id="quantity_on_hand" name="quantity_on_hand" step="1" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="reorder_level" class="form-label">Reorder Level *</label>
+                        <input type="number" class="form-control" id="reorder_level" name="reorder_level" step="1" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'products:list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Create Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+</style>
+{% endblock %}

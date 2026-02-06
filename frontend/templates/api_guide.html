@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+
+{% block title %}API Integration Guide - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <h1>API Integration Documentation</h1>
+        <p class="lead">This document describes how Django Frontend consumes REST APIs from the Java Spring Boot Backend.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>1. Architecture Overview</h5>
+    </div>
+    <div class="card-body">
+        <p>The Django frontend communicates with the Java Spring Boot backend through HTTP REST APIs:</p>
+        <pre><code>
+Django Frontend → HTTP Requests → Java Spring Boot Backend → PostgreSQL Database
+        ↑                                      ↓
+        └──────────── HTTP Responses ────────┘
+        </code></pre>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>2. API Client Implementation</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Location:</strong> <code>apps/core/api_client.py</code></p>
+        
+        <p>The <code>APIClient</code> class handles all HTTP communication:</p>
+        
+        <pre><code>from apps.core.api_client import api_client
+
+# All methods use the api_client singleton instance
+response = api_client.login(username, password)
+response = api_client.get_products(token, page=1, size=10)
+response = api_client.create_bill(token, bill_data)
+        </code></pre>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>3. Authentication Flow</h5>
+    </div>
+    <div class="card-body">
+        <ol>
+            <li><strong>Login:</strong> User submits credentials to Django login view</li>
+            <li><strong>API Call:</strong> Django calls <code>api_client.login(username, password)</code></li>
+            <li><strong>Backend Response:</strong> Java backend returns JWT token and user info</li>
+            <li><strong>Session Storage:</strong> Token stored in Django session</li>
+            <li><strong>Subsequent Requests:</strong> Token included in Authorization header for all API calls</li>
+        </ol>
+        
+        <pre><code>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code></pre>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>4. API Request/Response Examples</h5>
+    </div>
+    <div class="card-body">
+        <h6>Login Request</h6>
+        <pre><code>POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+    "username": "cashier",
+    "password": "password123"
+}</code></pre>
+
+        <h6>Login Response</h6>
+        <pre><code>{
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "userId": 1,
+        "username": "cashier",
+        "role": "CASHIER",
+        "expiresIn": 86400000
+    },
+    "message": "Login successful"
+}</code></pre>
+
+        <h6>Get Products Request</h6>
+        <pre><code>GET /api/v1/products?page=0&size=10
+Authorization: Bearer {token}</code></pre>
+
+        <h6>Get Products Response</h6>
+        <pre><code>{
+    "data": {
+        "content": [
+            {
+                "productId": 1,
+                "productName": "Apple",
+                "sku": "APPLE001",
+                "barcode": "1234567890",
+                "sellingPrice": 2.99,
+                "quantityOnHand": 50
+            }
+        ],
+        "totalPages": 5,
+        "currentPage": 0
+    },
+    "message": "Products retrieved successfully"
+}</code></pre>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>5. Error Handling</h5>
+    </div>
+    <div class="card-body">
+        <p>API errors are handled gracefully:</p>
+        
+        <pre><code>response = api_client.get_product_by_id(token, 999)
+
+if response and 'data' in response:
+    product = response['data']
+    # Process product
+else:
+    # Handle error - response will be None if API call failed
+    messages.error(request, 'Product not found')</code></pre>
+
+        <h6>Common Error Scenarios:</h6>
+        <ul>
+            <li><strong>Connection Error:</strong> Backend API unreachable</li>
+            <li><strong>Timeout Error:</strong> Request takes too long (configurable timeout)</li>
+            <li><strong>Invalid JSON:</strong> Response is not valid JSON</li>
+            <li><strong>HTTP Errors:</strong> 400, 401, 403, 404, 500, etc.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>6. API Methods by Module</h5>
+    </div>
+    <div class="card-body">
+        <h6>Authentication</h6>
+        <ul>
+            <li><code>api_client.login(username, password)</code></li>
+            <li><code>api_client.verify_token(token)</code></li>
+        </ul>
+
+        <h6>Products</h6>
+        <ul>
+            <li><code>api_client.get_products(token, page, size)</code></li>
+            <li><code>api_client.get_product_by_id(token, product_id)</code></li>
+            <li><code>api_client.get_product_by_barcode(token, barcode)</code></li>
+            <li><code>api_client.search_products(token, query)</code></li>
+            <li><code>api_client.create_product(token, product_data)</code></li>
+            <li><code>api_client.update_product(token, product_id, product_data)</code></li>
+            <li><code>api_client.delete_product(token, product_id)</code></li>
+            <li><code>api_client.get_low_stock_products(token)</code></li>
+        </ul>
+
+        <h6>Customers</h6>
+        <ul>
+            <li><code>api_client.get_customers(token, page, size)</code></li>
+            <li><code>api_client.get_customer_by_id(token, customer_id)</code></li>
+            <li><code>api_client.search_customers(token, query)</code></li>
+            <li><code>api_client.create_customer(token, customer_data)</code></li>
+            <li><code>api_client.update_customer(token, customer_id, customer_data)</code></li>
+            <li><code>api_client.delete_customer(token, customer_id)</code></li>
+        </ul>
+
+        <h6>Bills</h6>
+        <ul>
+            <li><code>api_client.get_bills(token, page, size)</code></li>
+            <li><code>api_client.get_bill_by_id(token, bill_id)</code></li>
+            <li><code>api_client.create_bill(token, bill_data)</code></li>
+            <li><code>api_client.void_bill(token, bill_id)</code></li>
+            <li><code>api_client.get_bill_receipt(token, bill_id)</code></li>
+            <li><code>api_client.get_daily_sales(token, date)</code></li>
+        </ul>
+
+        <h6>Payments</h6>
+        <ul>
+            <li><code>api_client.process_payment(token, payment_data)</code></li>
+            <li><code>api_client.get_payment_by_id(token, payment_id)</code></li>
+            <li><code>api_client.get_payment_by_bill(token, bill_id)</code></li>
+            <li><code>api_client.refund_payment(token, payment_id, reason)</code></li>
+        </ul>
+
+        <h6>Reports</h6>
+        <ul>
+            <li><code>api_client.get_daily_sales_report(token, date)</code></li>
+            <li><code>api_client.get_sales_range_report(token, start_date, end_date)</code></li>
+            <li><code>api_client.get_inventory_report(token)</code></li>
+            <li><code>api_client.get_product_sales_report(token, start_date, end_date)</code></li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>7. Configuration</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Backend API URL:</strong> <code>BACKEND_API_URL</code> in <code>config/settings.py</code></p>
+        <pre><code>BACKEND_API_URL = os.getenv('BACKEND_API_URL', 'http://localhost:8080/api/v1')</code></pre>
+
+        <p><strong>API Timeout:</strong> <code>BACKEND_API_TIMEOUT</code> (in seconds)</p>
+        <pre><code>BACKEND_API_TIMEOUT = int(os.getenv('BACKEND_API_TIMEOUT', '10'))</code></pre>
+
+        <p>Configure in <code>.env</code>:</p>
+        <pre><code>BACKEND_API_URL=http://localhost:8080/api/v1
+BACKEND_API_TIMEOUT=10</code></pre>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>8. View Integration Example</h5>
+    </div>
+    <div class="card-body">
+        <pre><code>from apps.core.api_client import api_client
+from django.shortcuts import render
+from apps.core.decorators import login_required_custom
+
+@login_required_custom
+def product_list(request):
+    token = request.session.get('token')
+    page = request.GET.get('page', 1)
+    
+    # Call API
+    response = api_client.get_products(token, page=int(page), size=10)
+    
+    # Extract data
+    products = []
+    if response and 'data' in response:
+        data = response['data']
+        if isinstance(data, dict) and 'content' in data:
+            products = data['content']
+    
+    # Render template
+    context = {
+        'products': products,
+        'current_page': int(page),
+    }
+    
+    return render(request, 'products/list.html', context)</code></pre>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>9. Offline Capability (Future)</h5>
+    </div>
+    <div class="card-body">
+        <p>For offline support:</p>
+        <ul>
+            <li>Service Workers cache API responses</li>
+            <li>IndexedDB stores transaction data locally</li>
+            <li>Data syncs when connection restored</li>
+            <li>See <code>static/js/offline.js</code> for implementation</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

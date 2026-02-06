@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Process Payment - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-8">
+        <h1>Process Payment</h1>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'billing:list' %}" class="btn btn-secondary float-end">
+            <i class="fas fa-arrow-left"></i> Back to Billing
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" class="needs-validation">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="amount_paid" class="form-label">Amount Paid *</label>
+                        <input type="number" class="form-control" id="amount_paid" name="amount_paid" step="0.01" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Payment Method *</label>
+                        <select class="form-control" id="payment_method" name="payment_method" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="check">Check</option>
+                            <option value="online">Online</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="reference_number" class="form-label">Reference Number</label>
+                <input type="text" class="form-control" id="reference_number" name="reference_number">
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'billing:list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i> Process Payment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+</style>
+{% endblock %}

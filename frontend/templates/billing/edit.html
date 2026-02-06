@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Bill - Grocery Billing System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bill-edit-form {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+    }
+    
+    .item-row {
+        background-color: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #e0e0e0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <a href="{% url 'billing:detail' bill.id %}" class="btn btn-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <h1>Edit Bill #{{ bill.id }}</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="POST" class="bill-edit-form">
+            {% csrf_token %}
+            
+            <!-- Customer Details Section -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Customer Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="customer_name" class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="customer_name" name="customer_name" 
+                               value="{{ bill.customer_name|default:'' }}">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="customer_phone" class="form-label">Phone</label>
+                                <input type="text" class="form-control" id="customer_phone" name="customer_phone" 
+                                       value="{{ bill.customer_phone|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="customer_email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="customer_email" name="customer_email" 
+                                       value="{{ bill.customer_email|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bill Date/Time Section -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Bill Date & Time</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="created_at" class="form-label">Created At</label>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTime(-60)">
+                                <i class="fas fa-minus"></i> 1hr
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTime(-10)">
+                                <i class="fas fa-minus"></i> 10min
+                            </button>
+                            <input type="datetime-local" class="form-control" id="created_at" name="created_at" 
+                                   value="{{ bill.created_at|date:'Y-m-dTH:i' }}">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTime(10)">
+                                10min <i class="fas fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTime(60)">
+                                1hr <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <small class="form-text text-muted d-block mt-2">Use +/- buttons to adjust time or edit directly</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bill Items Section -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Bill Items</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in bill.items.all %}
+                    <div class="item-row">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="text-muted small">Product</p>
+                                <p><strong>{{ item.product_name }}</strong></p>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="mb-0">
+                                    <label class="form-label" style="font-size: 0.85rem;">Quantity</label>
+                                    <div class="input-group input-group-sm">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="adjustQuantity('quantity_{{ item.id }}', -1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control form-control-sm text-center" 
+                                               name="quantity_{{ item.id }}" value="{{ item.quantity }}" 
+                                               onchange="updateItemTotal(this)">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="adjustQuantity('quantity_{{ item.id }}', 1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-0">
+                                    <label class="form-label" style="font-size: 0.85rem;">Unit Price (₹)</label>
+                                    <div class="input-group input-group-sm">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="adjustPrice('unit_price_{{ item.id }}', -10)">
+                                            <i class="fas fa-minus"></i> 10
+                                        </button>
+                                        <input type="number" class="form-control form-control-sm text-center" step="0.01"
+                                               name="unit_price_{{ item.id }}" value="{{ item.unit_price }}" 
+                                               onchange="updateItemTotal(this)">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="adjustPrice('unit_price_{{ item.id }}', 10)">
+                                            10 <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-0">
+                                    <label class="form-label" style="font-size: 0.85rem;">Total (₹)</label>
+                                    <p class="form-control-plaintext"><strong>₹<span class="item-total">{{ item.total_price }}</span></strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Discount & Tax Section -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Discount & Tax</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="discount" class="form-label">Discount (₹)</label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(-100)">
+                                        <i class="fas fa-minus"></i> 100
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(-10)">
+                                        <i class="fas fa-minus"></i> 10
+                                    </button>
+                                    <input type="number" class="form-control" id="discount" name="discount" 
+                                           step="0.01" value="{{ bill.discount }}" min="0" onchange="calculateTotals()">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(10)">
+                                        10 <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(100)">
+                                        100 <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tax_percent" class="form-label">Tax (%)</label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTax(-1)">
+                                        <i class="fas fa-minus"></i> 1%
+                                    </button>
+                                    <input type="number" class="form-control" id="tax_percent" name="tax_percent" 
+                                           step="0.01" value="0" min="0" max="100" onchange="calculateTotals()">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTax(1)">
+                                        1% <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <small class="form-text text-muted d-block mt-2">Enter 0 for no tax, 5 for 5%, etc.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="{% url 'billing:detail' bill.id %}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Summary Section -->
+    <div class="col-md-4">
+        <div class="card sticky-top">
+            <div class="card-header">
+                <h5>Bill Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <strong>₹<span id="subtotal">{{ bill.subtotal }}</span></strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Discount:</span>
+                        <strong>-₹<span id="discount-display">{{ bill.discount }}</span></strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tax:</span>
+                        <strong>+₹<span id="tax-display">{{ bill.tax }}</span></strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span style="font-size: 1.2rem;">Total:</span>
+                        <strong style="font-size: 1.2rem;">₹<span id="total">{{ bill.total }}</span></strong>
+                    </div>
+                </div>
+                <div class="alert alert-info">
+                    <strong>Status:</strong> {{ bill.get_status_display }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Adjust time by minutes
+function adjustTime(minutes) {
+    const input = document.getElementById('created_at');
+    const date = new Date(input.value);
+    date.setMinutes(date.getMinutes() + minutes);
+    input.value = date.toISOString().slice(0, 16);
+}
+
+// Adjust quantity
+function adjustQuantity(fieldId, amount) {
+    const input = document.querySelector(`[name="${fieldId}"]`);
+    let value = parseInt(input.value) || 0;
+    value = Math.max(1, value + amount);
+    input.value = value;
+    updateItemTotal(input);
+}
+
+// Adjust unit price
+function adjustPrice(fieldId, amount) {
+    const input = document.querySelector(`[name="${fieldId}"]`);
+    let value = parseFloat(input.value) || 0;
+    value = Math.max(0, value + amount);
+    input.value = value.toFixed(2);
+    updateItemTotal(input);
+}
+
+// Adjust discount
+function adjustDiscount(amount) {
+    const input = document.getElementById('discount');
+    let value = parseFloat(input.value) || 0;
+    value = Math.max(0, value + amount);
+    input.value = value.toFixed(2);
+    calculateTotals();
+}
+
+// Adjust tax
+function adjustTax(amount) {
+    const input = document.getElementById('tax_percent');
+    let value = parseFloat(input.value) || 0;
+    value = Math.max(0, Math.min(100, value + amount));
+    input.value = value.toFixed(2);
+    calculateTotals();
+}
+
+function updateItemTotal(element) {
+    // Get the row containing this input
+    const row = element.closest('.item-row');
+    const quantity = parseFloat(row.querySelector('input[name^="quantity_"]').value) || 0;
+    const unitPrice = parseFloat(row.querySelector('input[name^="unit_price_"]').value) || 0;
+    const total = quantity * unitPrice;
+    
+    // Update the total display
+    row.querySelector('.item-total').textContent = total.toFixed(2);
+    
+    calculateTotals();
+}
+
+function calculateTotals() {
+    let subtotal = 0;
+    
+    // Calculate subtotal from all items
+    const itemRows = document.querySelectorAll('.item-row');
+    itemRows.forEach(row => {
+        const total = parseFloat(row.querySelector('.item-total').textContent) || 0;
+        subtotal += total;
+    });
+    
+    const discount = parseFloat(document.getElementById('discount').value) || 0;
+    const taxPercent = parseFloat(document.getElementById('tax_percent').value) || 0;
+    
+    const subtotalAfterDiscount = Math.max(subtotal - discount, 0);
+    const tax = (subtotalAfterDiscount * taxPercent) / 100;
+    const total = subtotalAfterDiscount + tax;
+    
+    // Update display
+    document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+    document.getElementById('discount-display').textContent = discount.toFixed(2);
+    document.getElementById('tax-display').textContent = tax.toFixed(2);
+    document.getElementById('total').textContent = total.toFixed(2);
+}
+
+// Calculate on page load
+document.addEventListener('DOMContentLoaded', calculateTotals);
+</script>
+
+{% endblock %}

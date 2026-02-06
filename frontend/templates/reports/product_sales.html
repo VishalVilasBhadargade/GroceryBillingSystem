@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Sales Report - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <h1>Product Sales Report</h1>
+        <p class="text-muted">Analyze product performance and sales trends</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Select Date Range</h5>
+            </div>
+            <div class="card-body">
+                <form method="get">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if start_date and end_date %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Product Sales Summary ({{ start_date }} to {{ end_date }})</h5>
+            </div>
+            <div class="card-body">
+                {% if report.products %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th>Quantity Sold</th>
+                                <th>Total Revenue</th>
+                                <th>Average Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in report.products %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ product.product_name }}</td>
+                                <td>{{ product.total_quantity }}</td>
+                                <td>₹{{ product.total_revenue|floatformat:2 }}</td>
+                                <td>₹{{ product.avg_price|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-info">
+                                <th colspan="2">Total</th>
+                                <th>{{ report.total_quantity }}</th>
+                                <th>₹{{ report.total_revenue|floatformat:2 }}</th>
+                                <th>-</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No sales data for the selected period</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Top 10 Products by Quantity</h5>
+            </div>
+            <div class="card-body">
+                {% if report.top_by_quantity %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in report.top_by_quantity %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td><span class="badge bg-primary">{{ product.total_quantity }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Top 10 Products by Revenue</h5>
+            </div>
+            <div class="card-body">
+                {% if report.top_by_revenue %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in report.top_by_revenue %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td><span class="badge bg-success">₹{{ product.total_revenue|floatformat:2 }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

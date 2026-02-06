@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Daily Sales Report - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <h1>Daily Sales Report</h1>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="form-inline">
+            <div class="input-group">
+                <input type="date" class="form-control" name="date" value="{{ date }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> View Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if report %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <p class="card-text">Total Sales</p>
+                <h3>₹{{ report.totalRevenue }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <p class="card-text">Total Bills</p>
+                <h3>{{ report.totalBills }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <p class="card-text">Average Bill</p>
+                <h3>₹{{ report.averageBill }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <p class="card-text">Total Items Sold</p>
+                <h3>{{ report.totalItems }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">Select a date to view the report.</div>
+{% endif %}
+{% endblock %}

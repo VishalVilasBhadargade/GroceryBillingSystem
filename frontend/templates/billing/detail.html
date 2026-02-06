@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+
+{% block title %}Bill Details - Grocery Billing System{% endblock %}
+
+{% block extra_css %}
+<style>
+@media print {
+    .btn, .card-header, nav, .no-print {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    body {
+        font-size: 12px;
+    }
+
+    .print-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 12px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+}
+
+.print-header {
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row my-4 no-print">
+    <div class="col-md-12">
+        <a href="{% url 'billing:list' %}" class="btn btn-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+{% if bill %}
+<div class="print-header">
+    Shree Sai Krupa Kirana Store
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Customer Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p class="text-muted mb-1">Customer Name</p>
+                    <p><strong>{{ bill.customer_name|default:"Walk-in Customer" }}</strong></p>
+                </div>
+
+                {% if bill.customer_phone %}
+                <div class="mb-3">
+                    <p class="text-muted mb-1">Phone</p>
+                    <p>{{ bill.customer_phone }}</p>
+                </div>
+                {% endif %}
+
+                {% if bill.customer_email %}
+                <div class="mb-3">
+                    <p class="text-muted mb-1">Email</p>
+                    <p>{{ bill.customer_email }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-1">Shree Sai Krupa Kirana Store</h5>
+                <small class="text-muted">Bill #{{ bill.id }} - {{ bill.created_at }}</small>
+            </div>
+            <div class="card-body">
+                <h6>Items</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in bill.items.all %}
+                        <tr>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>₹{{ item.unit_price }}</td>
+                            <td>₹{{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Bill Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <p class="text-muted">Status</p>
+                    {% if bill.status == 'PAID' %}
+                    <span class="badge bg-success">Paid</span>
+                    {% elif bill.status == 'PENDING' %}
+                    <span class="badge bg-warning">Pending</span>
+                    {% elif bill.status == 'VOID' %}
+                    <span class="badge bg-danger">Void</span>
+                    {% endif %}
+                </div>
+
+                <table class="table table-sm">
+                    <tr>
+                        <th>Subtotal</th>
+                        <td>₹{{ bill.subtotal }}</td>
+                    </tr>
+                    <tr>
+                        <th>Discount</th>
+                        <td>₹{{ bill.discount }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tax</th>
+                        <td>₹{{ bill.tax }}</td>
+                    </tr>
+                    <tr class="table-active">
+                        <th>Total</th>
+                        <td><strong>₹{{ bill.total }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Amount Paid</th>
+                        <td><strong class="text-success">₹{{ bill.amount_paid }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Remaining Amount</th>
+                        <td>
+                            {% if bill.remaining_amount > 0.01 %}
+                                <strong class="text-danger">₹{{ bill.remaining_amount|floatformat:2 }}</strong>
+                            {% else %}
+                                <strong class="text-success">₹0.00</strong>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="d-grid gap-2 mb-2">
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print Receipt
+                    </button>
+                </div>
+
+                <!-- Payment Recording Section -->
+                {% if bill.status != 'VOID' and bill.remaining_amount > 0.01 %}
+                <div class="card mt-3">
+                    <div class="card-header bg-info">
+                        <h6 class="mb-0">Record Payment</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{% url 'billing:record_payment' bill.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="amount_paid" class="form-label">Amount to Pay (₹)</label>
+                                <input type="number" class="form-control" id="amount_paid" name="amount_paid" 
+                                       step="0.01" placeholder="₹0.00" min="0.01" max="{{ bill.remaining_amount }}" required>
+                                <small class="form-text text-muted">Max: ₹{{ bill.remaining_amount }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="payment_method" class="form-label">Payment Method</label>
+                                <select class="form-control" id="payment_method" name="payment_method" required>
+                                    <option value="CASH">Cash</option>
+                                    <option value="CARD">Card</option>
+                                    <option value="UPI">UPI</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reference_number" class="form-label">Reference Number (Optional)</label>
+                                <input type="text" class="form-control" id="reference_number" name="reference_number" 
+                                       placeholder="Transaction ID, Check #, etc.">
+                            </div>
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes (Optional)</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                          placeholder="Any additional notes"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-money-bill"></i> Record Payment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Payment History -->
+                {% if bill.payments.all %}
+                <div class="card mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0">Payment History</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in bill.payments.all %}
+                                <tr>
+                                    <td>{{ payment.created_at|date:"d-m-Y H:i" }}</td>
+                                    <td>₹{{ payment.amount }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ payment.get_payment_method_display }}</span>
+                                        {% if payment.reference_number %}
+                                        <br><small class="text-muted">Ref: {{ payment.reference_number }}</small>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if bill.status == 'PAID' %}
+                <div class="d-grid gap-2">
+                    <a href="{% url 'billing:edit' bill.id %}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Edit Bill
+                    </a>
+                    <a href="{% url 'billing:void' bill.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Void this bill?')">
+                        <i class="fas fa-ban"></i> Void Bill
+                    </a>
+                    <a href="{% url 'billing:delete' bill.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this bill? This cannot be undone.');">
+                        <i class="fas fa-trash"></i> Delete Bill
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-danger">Bill not found</div>
+{% endif %}
+{% endblock %}

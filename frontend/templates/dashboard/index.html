@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Grocery Billing System{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <h1>Dashboard</h1>
+        <p class="text-muted">Welcome, <strong>{{ username }}</strong> ({{ user_role }})</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-boxes"></i> Products</h5>
+                <p class="card-text">Manage inventory</p>
+                <a href="{% url 'products:list' %}" class="btn btn-light btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-receipt"></i> Billing</h5>
+                <p class="card-text">Create & manage bills</p>
+                <a href="{% url 'billing:list' %}" class="btn btn-light btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-users"></i> Customers</h5>
+                <p class="card-text">Customer management</p>
+                <a href="{% url 'customers:list' %}" class="btn btn-light btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chart-bar"></i> Reports</h5>
+                <p class="card-text">Sales & analytics</p>
+                <a href="{% url 'reports:daily_sales' %}" class="btn btn-light btn-sm">View</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if daily_sales %}
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Daily Sales Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="text-muted">Total Sales</p>
+                        <h3>₹{{ daily_sales.totalRevenue }}</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted">Total Bills</p>
+                        <h3>{{ daily_sales.totalBills }}</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted">Average Bill</p>
+                        <h3>₹{{ daily_sales.averageBill }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if low_stock_products %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5>Low Stock Alerts</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Current Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in low_stock_products %}
+                        <tr>
+                            <td>{{ product.product_name }}</td>
+                            <td><span class="badge bg-danger">{{ product.quantity_on_hand }}</span></td>
+                            <td>{{ product.reorder_level }}</td>
+                            <td>
+                                <a href="{% url 'products:detail' product.id %}" class="btn btn-sm btn-primary">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

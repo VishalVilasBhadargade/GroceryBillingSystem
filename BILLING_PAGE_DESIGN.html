@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Store - Point of Sale (POS)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --light-gray: #ecf0f1;
+            --border-color: #bdc3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .pos-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .pos-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pos-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pos-header .store-info {
+            text-align: right;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .pos-header .store-info p {
+            margin: 3px 0;
+        }
+
+        /* Main Content */
+        .pos-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0;
+            min-height: 600px;
+        }
+
+        /* Product Section */
+        .product-section {
+            padding: 30px;
+            border-right: 2px solid var(--light-gray);
+            overflow-y: auto;
+            max-height: 800px;
+        }
+
+        .product-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .product-section::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        .product-section::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .product-section::-webkit-scrollbar-thumb:hover {
+            background: #95a5a6;
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input-wrapper input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--info-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .search-input-wrapper .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--border-color);
+            pointer-events: none;
+        }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .product-card:hover {
+            border-color: var(--info-color);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .product-card.selected {
+            border-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.05);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100px;
+            background: var(--light-gray);
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 10px;
+        }
+
+        .product-stock {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 8px;
+            background: var(--info-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            background: #2980b9;
+            transform: scale(1.02);
+        }
+
+        .add-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Bill Section */
+        .bill-section {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        .bill-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Bill Items */
+        .bill-items-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            max-height: 400px;
+        }
+
+        .bill-items-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .bill-items-container::-webkit-scrollbar-track {
+            background: white;
+        }
+
+        .bill-items-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .bill-item {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: grid;
+            grid-template-columns: 1fr 60px 60px 40px;
+            gap: 10px;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .bill-item-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 13px;
+        }
+
+        .bill-item-price {
+            text-align: center;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .quantity-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+            border-color: var(--info-color);
+        }
+
+        .bill-item-total {
+            text-align: right;
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 13px;
+        }
+
+        .bill-item-remove {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bill-item-remove:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .empty-bill {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+        }
+
+        .empty-bill i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-bill p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Bill Summary */
+        .bill-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid var(--light-gray);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            font-size: 13px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .summary-row .value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .summary-row.total {
+            padding: 12px 0;
+            font-size: 18px;
+            font-weight: 700;
+            border-top: 2px solid var(--primary-color);
+            border-bottom: none !important;
+            color: var(--success-color);
+        }
+
+        .summary-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .summary-input-row label {
+            flex: 1;
+            color: #7f8c8d;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .summary-input-row input {
+            width: 80px;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .summary-input-row input:focus {
+            outline: none;
+            border-color: var(--info-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-clear {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-print {
+            background: var(--success-color);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-print:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-print:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Receipt Preview (Hidden by default) */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .pos-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .pos-header {
+                text-align: center;
+                padding: 15px;
+            }
+
+            .pos-content {
+                display: block;
+                grid-template-columns: none;
+            }
+
+            .product-section {
+                display: none;
+            }
+
+            .bill-section {
+                border-right: none;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .action-buttons {
+                display: none;
+            }
+
+            .bill-item-remove {
+                display: none;
+            }
+
+            .bill-items-container {
+                max-height: none;
+            }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(300px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .notification.info {
+            border-left: 4px solid var(--info-color);
+        }
+
+        .notification-message {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .pos-content {
+                grid-template-columns: 1fr;
+            }
+
+            .product-section {
+                border-right: none;
+                border-bottom: 2px solid var(--light-gray);
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pos-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .pos-header h1 {
+                justify-content: center;
+            }
+
+            .pos-header .store-info {
+                text-align: center;
+            }
+
+            .product-section {
+                padding: 15px;
+            }
+
+            .bill-section {
+                padding: 15px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .product-card {
+                padding: 10px;
+            }
+
+            .bill-item {
+                grid-template-columns: 1fr 50px 50px;
+                gap: 8px;
+            }
+
+            .bill-item-remove {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pos-container">
+        <!-- Header -->
+        <div class="pos-header">
+            <div>
+                <h1>
+                    <i class="fas fa-shopping-cart"></i>
+                    SuperMart Grocery Store
+                </h1>
+            </div>
+            <div class="store-info">
+                <p><strong>Store ID:</strong> SM-001</p>
+                <p><strong>Cashier:</strong> John Doe</p>
+                <p><span id="currentTime">--:--:--</span></p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="pos-content">
+            <!-- Product Selection -->
+            <div class="product-section">
+                <div class="search-section">
+                    <label><i class="fas fa-search"></i> Product Search</label>
+                    <div class="search-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="productSearch" 
+                            placeholder="Search by name or barcode..."
+                            autocomplete="off"
+                        >
+                        <i class="fas fa-barcode search-icon"></i>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Bill Summary -->
+            <div class="bill-section">
+                <div class="bill-header">
+                    <i class="fas fa-receipt"></i>
+                    Current Bill
+                </div>
+
+                <div class="bill-items-container" id="billItemsContainer">
+                    <div class="empty-bill">
+                        <i class="fas fa-shopping-basket"></i>
+                        <p>No items added yet</p>
+                    </div>
+                </div>
+
+                <!-- Summary Section -->
+                <div class="bill-summary">
+                    <div class="summary-row">
+                        <label>Subtotal:</label>
+                        <span class="value">₹<span id="subtotal">0.00</span></span>
+                    </div>
+
+                    <div class="summary-input-row">
+                        <label for="discountAmount">Discount (₹):</label>
+                        <input 
+                            type="number" 
+                            id="discountAmount" 
+                            value="0" 
+                            min="0" 
+                            step="0.01"
+                        >
+                    </div>
+
+                    <div class="summary-input-row">
+                        <label for="taxRate">Tax (%):</label>
+                        <input 
+                            type="number" 
+                            id="taxRate" 
+                            value="0" 
+                            min="0" 
+                            max="100" 
+                            step="0.01"
+                        >
+                    </div>
+
+                    <div class="summary-row">
+                        <label>Tax Amount:</label>
+                        <span class="value">₹<span id="taxAmount">0.00</span></span>
+                    </div>
+
+                    <div class="summary-row total">
+                        <label>Total Amount:</label>
+                        <span>₹<span id="totalAmount">0.00</span></span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-action btn-clear" onclick="clearBill()">
+                            <i class="fas fa-trash"></i>
+                            Clear Bill
+                        </button>
+                        <button class="btn-action btn-print" id="printBtn" onclick="printInvoice()" disabled>
+                            <i class="fas fa-print"></i>
+                            Print Invoice
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script>
+        // ============================================
+        // SAMPLE DATA
+        // ============================================
+        const sampleProducts = [
+            { id: 1, name: 'Apple', price: 50, stock: 20, emoji: '🍎' },
+            { id: 2, name: 'Banana', price: 30, stock: 15, emoji: '🍌' },
+            { id: 3, name: 'Orange', price: 45, stock: 18, emoji: '🍊' },
+            { id: 4, name: 'Milk (1L)', price: 65, stock: 12, emoji: '🥛' },
+            { id: 5, name: 'Bread', price: 40, stock: 25, emoji: '🍞' },
+            { id: 6, name: 'Eggs (Dozen)', price: 80, stock: 10, emoji: '🥚' },
+            { id: 7, name: 'Rice (1kg)', price: 120, stock: 8, emoji: '🍚' },
+            { id: 8, name: 'Oil (1L)', price: 180, stock: 6, emoji: '🍳' },
+            { id: 9, name: 'Sugar (1kg)', price: 50, stock: 14, emoji: '🍯' },
+            { id: 10, name: 'Salt (500g)', price: 25, stock: 20, emoji: '🧂' },
+            { id: 11, name: 'Tomato', price: 35, stock: 22, emoji: '🍅' },
+            { id: 12, name: 'Potato (1kg)', price: 40, stock: 16, emoji: '🥔' },
+        ];
+
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
+        let billItems = [];
+        let allProducts = [...sampleProducts];
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            setupEventListeners();
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+
+        // ============================================
+        // LOAD & DISPLAY PRODUCTS
+        // ============================================
+        function loadProducts(searchTerm = '') {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            const filteredProducts = allProducts.filter(product => {
+                const term = searchTerm.toLowerCase();
+                return product.name.toLowerCase().includes(term) || 
+                       product.id.toString().includes(term);
+            });
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '<div class="empty-bill" style="grid-column: 1/-1;"><i class="fas fa-search"></i><p>No products found</p></div>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-image">${product.emoji}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">₹${product.price.toFixed(2)}</div>
+                    <div class="product-stock">
+                        ${product.stock > 0 ? `<span class="badge bg-success" style="font-size: 11px;">Stock: ${product.stock}</span>` : '<span class="badge bg-danger" style="font-size: 11px;">Out of Stock</span>'}
+                    </div>
+                    <button class="add-btn" onclick="addItemToBill(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ============================================
+        // BILL MANAGEMENT
+        // ============================================
+        function addItemToBill(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product || product.stock === 0) {
+                showNotification('Product out of stock', 'error');
+                return;
+            }
+
+            const existingItem = billItems.find(item => item.id === productId);
+            
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity++;
+                } else {
+                    showNotification('Cannot exceed available stock', 'error');
+                    return;
+                }
+            } else {
+                billItems.push({
+                    id: productId,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    stock: product.stock
+                });
+            }
+
+            renderBillItems();
+            showNotification(`${product.name} added to bill`, 'success');
+        }
+
+        function renderBillItems() {
+            const container = document.getElementById('billItemsContainer');
+            
+            if (billItems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-bill">
+                        <i class="fas fa-shopping-basket"></i>
+                        <p>No items added yet</p>
+                    </div>
+                `;
+                document.getElementById('printBtn').disabled = true;
+                return;
+            }
+
+            container.innerHTML = billItems.map((item, index) => `
+                <div class="bill-item">
+                    <div class="bill-item-name">${item.name}</div>
+                    <div class="bill-item-price">₹${item.price.toFixed(2)}</div>
+                    <input 
+                        type="number" 
+                        class="quantity-input" 
+                        value="${item.quantity}" 
+                        min="1" 
+                        max="${item.stock}"
+                        onchange="updateQuantity(${index}, this.value)"
+                    >
+                    <div class="bill-item-total">₹${(item.price * item.quantity).toFixed(2)}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('printBtn').disabled = false;
+            updateCalculations();
+        }
+
+        function updateQuantity(index, value) {
+            const newQuantity = parseInt(value) || 1;
+            const item = billItems[index];
+
+            if (newQuantity < 1) {
+                removeItemFromBill(index);
+                return;
+            }
+
+            if (newQuantity > item.stock) {
+                showNotification(`Maximum stock available: ${item.stock}`, 'error');
+                return;
+            }
+
+            item.quantity = newQuantity;
+            renderBillItems();
+        }
+
+        function removeItemFromBill(index) {
+            const removedItem = billItems.splice(index, 1)[0];
+            renderBillItems();
+            showNotification(`${removedItem.name} removed from bill`, 'info');
+        }
+
+        function clearBill() {
+            if (billItems.length === 0) return;
+            
+            if (confirm('Are you sure you want to clear the bill?')) {
+                billItems = [];
+                renderBillItems();
+                showNotification('Bill cleared', 'info');
+            }
+        }
+
+        // ============================================
+        // CALCULATIONS
+        // ============================================
+        function updateCalculations() {
+            // Calculate Subtotal
+            const subtotal = billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Get Discount and Tax Rate
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            
+            // Apply Discount
+            const afterDiscount = Math.max(0, subtotal - discount);
+            
+            // Calculate Tax
+            const taxAmount = (afterDiscount * taxRate) / 100;
+            
+            // Calculate Total
+            const total = afterDiscount + taxAmount;
+            
+            // Update UI
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('taxAmount').textContent = taxAmount.toFixed(2);
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {
+            // Product Search
+            document.getElementById('productSearch').addEventListener('input', (e) => {
+                loadProducts(e.target.value);
+            });
+
+            // Discount & Tax Changes
+            document.getElementById('discountAmount').addEventListener('change', updateCalculations);
+            document.getElementById('taxRate').addEventListener('change', updateCalculations);
+        }
+
+        // ============================================
+        // PRINTING
+        // ============================================
+        function printInvoice() {
+            if (billItems.length === 0) {
+                showNotification('No items to print', 'error');
+                return;
+            }
+
+            // Generate Receipt HTML
+            const receipts = billItems.map((item, idx) => 
+                `<tr>
+                    <td>${idx + 1}</td>
+                    <td style="text-align: left;">${item.name}</td>
+                    <td style="text-align: right;">₹${item.price.toFixed(2)}</td>
+                    <td style="text-align: center;">${item.quantity}</td>
+                    <td style="text-align: right;">₹${(item.price * item.quantity).toFixed(2)}</td>
+                </tr>`
+            ).join('');
+
+            const subtotal = billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const afterDiscount = Math.max(0, subtotal - discount);
+            const taxAmount = (afterDiscount * taxRate) / 100;
+            const total = afterDiscount + taxAmount;
+
+            const receiptHTML = `
+                <html>
+                <head>
+                    <style>
+                        body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; }
+                        .receipt { max-width: 400px; margin: 0 auto; }
+                        .receipt-header { text-align: center; margin-bottom: 20px; }
+                        .receipt-header h2 { margin: 5px 0; }
+                        .receipt-header p { margin: 2px 0; font-size: 12px; color: #666; }
+                        .divider { border-bottom: 1px dashed #ccc; margin: 10px 0; }
+                        table { width: 100%; font-size: 13px; }
+                        th { text-align: right; padding: 5px 0; border-bottom: 1px solid #ccc; font-weight: bold; }
+                        td { padding: 5px 0; }
+                        .summary { margin-top: 10px; }
+                        .summary-row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 13px; }
+                        .summary-row.total { font-weight: bold; font-size: 15px; border-top: 1px solid #ccc; padding-top: 10px; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 11px; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt">
+                        <div class="receipt-header">
+                            <h2>SuperMart Grocery</h2>
+                            <p>Invoice Receipt</p>
+                            <p>Date: ${new Date().toLocaleString()}</p>
+                            <p>Store ID: SM-001</p>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">S.No</th>
+                                    <th style="text-align: left;">Item</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${receipts}
+                            </tbody>
+                        </table>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="summary">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span>₹${subtotal.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Discount:</span>
+                                <span>-₹${discount.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax (${document.getElementById('taxRate').value}%):</span>
+                                <span>₹${taxAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>TOTAL:</span>
+                                <span>₹${total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="footer">
+                            <p>Thank you for shopping with us!</p>
+                            <p>Invoice ID: ${generateInvoiceId()}</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '', 'height=500,width=400');
+            printWindow.document.write(receiptHTML);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<div class="notification-message">${message}</div>`;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        function generateInvoiceId() {
+            return 'INV-' + Date.now();
+        }
+    </script>
+</body>
+</html>

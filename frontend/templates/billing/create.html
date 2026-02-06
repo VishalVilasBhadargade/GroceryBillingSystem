@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Bill - Grocery Billing System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bill-items-table {
+        margin-top: 20px;
+    }
+
+    .cart-item {
+        background-color: #f8f9fa;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    .product-search {
+        position: relative;
+    }
+
+    .autocomplete-list {
+        position: absolute;
+        background: white;
+        border: 1px solid #ddd;
+        max-height: 300px;
+        overflow-y: auto;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .autocomplete-item {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .autocomplete-item:hover {
+        background-color: #f5f5f5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <h1>Create Bill - POS Interface</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Add Items</h5>
+            </div>
+            <div class="card-body">
+                <div class="product-search">
+                    <label for="product_search">Search Product (Name/Barcode)</label>
+                    <input type="text" class="form-control" id="product_search" placeholder="Type product name or barcode...">
+                    <div id="autocomplete_list" class="autocomplete-list" style="display: none;"></div>
+                </div>
+
+                <div id="bill_items" class="bill-items-table"></div>
+
+                <button type="button" class="btn btn-secondary" onclick="clearBill()">Clear Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Bill Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <p class="text-muted">Items:</p>
+                        <h3 id="item_count">0</h3>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-muted">Subtotal:</p>
+                        <h3 id="subtotal">₹0.00</h3>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="mb-3">Customer Information</h6>
+                
+                <div class="mb-3">
+                    <label for="customer_name" class="form-label">Customer Name</label>
+                    <input type="text" class="form-control" id="customer_name" placeholder="Walk-in Customer">
+                </div>
+
+                <div class="mb-3">
+                    <label for="customer_phone" class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="customer_phone" placeholder="Optional">
+                </div>
+
+                <div class="mb-3">
+                    <label for="customer_email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="customer_email" placeholder="Optional">
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Discount (₹)</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(-100)">
+                            <i class="fas fa-minus"></i> 100
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(-10)">
+                            <i class="fas fa-minus"></i> 10
+                        </button>
+                        <input type="number" class="form-control" id="discount" placeholder="0.00" step="0.01">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(10)">
+                            10 <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustDiscount(100)">
+                            100 <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tax" class="form-label">Tax (%)</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTax(-1)">
+                            <i class="fas fa-minus"></i> 1%
+                        </button>
+                        <input type="number" class="form-control" id="tax" placeholder="0" value="0" step="0.01">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustTax(1)">
+                            1% <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <p class="text-muted">Tax Amount:</p>
+                        <p id="tax_amount">₹0.00</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-muted">Total:</p>
+                        <h4 id="total">₹0.00</h4>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                    <label for="amount_paid" class="form-label">Amount Paid (₹)</label>
+                    <input type="number" class="form-control" id="amount_paid" placeholder="Full amount" step="0.01" min="0">
+                    <small class="form-text text-muted">Leave empty for full payment, or enter partial amount</small>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-12">
+                        <p class="text-muted mb-1">Remaining Amount:</p>
+                        <h5 id="remaining_amount" class="text-danger">₹0.00</h5>
+                    </div>
+                </div>
+
+                <form method="post" id="bill_form">
+                    {% csrf_token %}
+                    <input type="hidden" id="bill_data" name="bill_data" value="{}">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-check"></i> Complete Sale
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Product data passed from backend - must be before pos.js
+    var products = {{ products|safe }};
+</script>
+<script src="{% static 'js/pos.js' %}?v=3"></script>
+{% endblock %}
