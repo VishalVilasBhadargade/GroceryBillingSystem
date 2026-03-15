@@ -40,3 +40,7 @@ Inventory Reports:
 
 
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/ffec3b9a302185c68be5152c7c303376b246c000/inventory%202%202026-03-15%20181520.png)
+
+
+Product Sales Report:
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/a29cfdea84c380e9a0ea6297e7191503b14cd154/Product%20Sales%20report2026-03-15%20182234.png)
