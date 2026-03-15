@@ -1,5 +1,10 @@
 This is grocery billing system Application. it is use in grocery shop
 
+profile:
+
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/43d83bd21a11a7e61e0e742b3eaceb346bdb67fa/Profile%2012026-03-15%20182735.png)
+
+
 Dashboard of grocery Application :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/8a230ae65c65a88600a64845548c688f4b9d57ee/Screenshot%202026-03-15%20172128.png)
 
@@ -44,3 +49,5 @@ Inventory Reports:
 
 Product Sales Report:
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/a29cfdea84c380e9a0ea6297e7191503b14cd154/Product%20Sales%20report2026-03-15%20182234.png)
+
+
