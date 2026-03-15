@@ -4,6 +4,8 @@ profile:
 
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/43d83bd21a11a7e61e0e742b3eaceb346bdb67fa/Profile%2012026-03-15%20182735.png)
 
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/0a31774e89bc84089ce2360a6e6bf2ff5e785dd1/profile2.png)
+
 
 Dashboard of grocery Application :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/8a230ae65c65a88600a64845548c688f4b9d57ee/Screenshot%202026-03-15%20172128.png)
