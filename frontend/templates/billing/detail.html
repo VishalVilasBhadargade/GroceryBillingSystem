@@ -37,12 +37,23 @@
         <a href="{% url 'billing:list' %}" class="btn btn-secondary mb-3">
             <i class="fas fa-arrow-left"></i> Back
         </a>
+        <a href="{% url 'billing:receipt' bill.id %}" class="btn btn-primary mb-3">
+            <i class="fas fa-print"></i> Print Receipt
+        </a>
+        <a href="{% url 'billing:receipt_pdf' bill.id %}" target="_blank" class="btn btn-outline-primary mb-3">
+            <i class="fas fa-file-pdf"></i> Receipt PDF
+        </a>
+        {% if whatsapp_receipt_url %}
+        <a href="{{ whatsapp_receipt_url }}" target="_blank" class="btn btn-success mb-3">
+            <i class="fab fa-whatsapp"></i> Send PDF on WhatsApp
+        </a>
+        {% endif %}
     </div>
 </div>
 
 {% if bill %}
 <div class="print-header">
-    Shree Sai Krupa Kirana Store
+    श्री साईकृपा किराणा
 </div>
 <div class="row">
     <div class="col-md-8">
@@ -74,7 +85,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-1">Shree Sai Krupa Kirana Store</h5>
+                <h5 class="mb-1">श्री साईकृपा किराणा</h5>
                 <small class="text-muted">Bill #{{ bill.id }} - {{ bill.created_at }}</small>
             </div>
             <div class="card-body">
@@ -82,19 +93,19 @@
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Total</th>
+                            <th style="width: 40%; text-align: left;">Product</th>
+                            <th style="width: 15%; text-align: right;">Quantity</th>
+                            <th style="width: 22%; text-align: right;">Unit Price</th>
+                            <th style="width: 23%; text-align: right;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in bill.items.all %}
                         <tr>
-                            <td>{{ item.product_name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>₹{{ item.unit_price }}</td>
-                            <td>₹{{ item.total_price }}</td>
+                            <td style="text-align: left;">{{ item.product_name }}</td>
+                            <td style="text-align: right;">{{ item.quantity|floatformat:2 }}</td>
+                            <td style="text-align: right;">₹{{ item.unit_price|floatformat:2 }}</td>
+                            <td style="text-align: right;">₹{{ item.total_price|floatformat:2 }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -123,23 +134,23 @@
                 <table class="table table-sm">
                     <tr>
                         <th>Subtotal</th>
-                        <td>₹{{ bill.subtotal }}</td>
+                        <td>₹{{ bill.subtotal|floatformat:2 }}</td>
                     </tr>
                     <tr>
                         <th>Discount</th>
-                        <td>₹{{ bill.discount }}</td>
+                        <td>₹{{ bill.discount|floatformat:2 }}</td>
                     </tr>
                     <tr>
                         <th>Tax</th>
-                        <td>₹{{ bill.tax }}</td>
+                        <td>₹{{ bill.tax|floatformat:2 }}</td>
                     </tr>
                     <tr class="table-active">
                         <th>Total</th>
-                        <td><strong>₹{{ bill.total }}</strong></td>
+                        <td><strong>₹{{ bill.total|floatformat:2 }}</strong></td>
                     </tr>
                     <tr>
                         <th>Amount Paid</th>
-                        <td><strong class="text-success">₹{{ bill.amount_paid }}</strong></td>
+                        <td><strong class="text-success">₹{{ bill.amount_paid|floatformat:2 }}</strong></td>
                     </tr>
                     <tr>
                         <th>Remaining Amount</th>
@@ -168,6 +179,7 @@
                     <div class="card-body">
                         <form method="POST" action="{% url 'billing:record_payment' bill.id %}">
                             {% csrf_token %}
+                            <input type="hidden" name="direct_pay_full" id="direct_pay_full" value="0">
                             <div class="mb-3">
                                 <label for="amount_paid" class="form-label">Amount to Pay (₹)</label>
                                 <input type="number" class="form-control" id="amount_paid" name="amount_paid" 
@@ -193,9 +205,14 @@
                                 <textarea class="form-control" id="notes" name="notes" rows="2" 
                                           placeholder="Any additional notes"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-money-bill"></i> Record Payment
-                            </button>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success" onclick="document.getElementById('direct_pay_full').value='0'">
+                                    <i class="fas fa-money-bill"></i> Record Partial Payment
+                                </button>
+                                <button type="submit" class="btn btn-primary" formnovalidate onclick="document.getElementById('direct_pay_full').value='1'">
+                                    <i class="fas fa-check-circle"></i> Direct Pay Full (₹{{ bill.remaining_amount|floatformat:2 }})
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -220,7 +237,7 @@
                                 {% for payment in bill.payments.all %}
                                 <tr>
                                     <td>{{ payment.created_at|date:"d-m-Y H:i" }}</td>
-                                    <td>₹{{ payment.amount }}</td>
+                                    <td>₹{{ payment.amount|floatformat:2 }}</td>
                                     <td>
                                         <span class="badge bg-info">{{ payment.get_payment_method_display }}</span>
                                         {% if payment.reference_number %}

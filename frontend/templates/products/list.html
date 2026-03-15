@@ -44,7 +44,7 @@
                     <tr>
                         <td>{{ product.product_name }}</td>
                         <td>{{ product.sku }}</td>
-                        <td>₹{{ product.selling_price }}</td>
+                        <td>₹{{ product.selling_price|floatformat:2 }}</td>
                         <td>
                             {% if product.quantity_on_hand > product.reorder_level %}
                             <span class="badge bg-success">{{ product.quantity_on_hand }}</span>

@@ -5,12 +5,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.dashboard.views import root
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', root),  # Root path handler
     
     # Local apps
-    path('', include('apps.dashboard.urls')),
+    path('dashboard/', include('apps.dashboard.urls')),
     path('auth/', include('apps.auth.urls')),
     path('products/', include('apps.products.urls')),
     path('customers/', include('apps.customers.urls')),

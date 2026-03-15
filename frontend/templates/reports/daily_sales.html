@@ -23,13 +23,12 @@
     </div>
 </div>
 
-{% if report %}
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-3">
         <div class="card bg-primary text-white">
             <div class="card-body">
                 <p class="card-text">Total Sales</p>
-                <h3>₹{{ report.totalRevenue }}</h3>
+                <h3>₹{{ report.totalRevenue|floatformat:2 }}</h3>
             </div>
         </div>
     </div>
@@ -45,7 +44,7 @@
         <div class="card bg-warning text-white">
             <div class="card-body">
                 <p class="card-text">Average Bill</p>
-                <h3>₹{{ report.averageBill }}</h3>
+                <h3>₹{{ report.averageBill|floatformat:2 }}</h3>
             </div>
         </div>
     </div>
@@ -57,8 +56,112 @@
             </div>
         </div>
     </div>
+    <div class="col-md-3 mt-3 mt-md-0">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <p class="card-text">Pending Payment</p>
+                <h3>₹{{ report.pendingAmount|floatformat:2 }}</h3>
+            </div>
+        </div>
+    </div>
 </div>
+
+{% if report.totalBills == 0 %}
+<div class="alert alert-info">No paid, partial, or pending bills found for {{ date }}.</div>
 {% else %}
-<div class="alert alert-info">Select a date to view the report.</div>
+
+{% if report.topProducts %}
+<div class="card mb-4">
+    <div class="card-header"><strong>Top Products Sold</strong></div>
+    <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Qty Sold</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in report.topProducts %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ p.product_name }}</td>
+                    <td>{{ p.total_quantity }}</td>
+                    <td>₹{{ p.total_revenue|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header"><strong>Bills on {{ date }}</strong></div>
+    <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>Bill #</th>
+                    <th>Customer</th>
+                    <th>Products</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bill in report.bills %}
+                <tr>
+                    <td>{{ bill.bill_number|default:bill.id }}</td>
+                    <td>{{ bill.customer_name|default:"-" }}</td>
+                    <td>
+                        {% for item in bill.items.all %}
+                            {{ item.product_name }} ({{ item.quantity }}){% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            -
+                        {% endfor %}
+                    </td>
+                    <td>{{ bill.items.count }}</td>
+                    <td>₹{{ bill.total|floatformat:2 }}</td>
+                    <td>
+                        {% if bill.status == 'PAID' %}
+                        <span class="badge bg-success">{{ bill.status }}</span>
+                        {% elif bill.status == 'PARTIAL' %}
+                        <span class="badge bg-warning text-dark">{{ bill.status }}</span>
+                        {% elif bill.status == 'PENDING' %}
+                        <span class="badge bg-danger">{{ bill.status }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ bill.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ bill.created_at|date:"H:i" }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            {% if bill.status == 'PARTIAL' and bill.remaining_amount > 0.01 %}
+                            <form method="post" action="{% url 'billing:record_payment' bill.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="direct_pay_full" value="1">
+                                <input type="hidden" name="payment_method" value="CASH">
+                                <button type="submit" class="btn btn-sm btn-success" title="Pay remaining ₹{{ bill.remaining_amount|floatformat:2 }}">
+                                    Direct Pay
+                                </button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'billing:receipt' bill.id %}" target="_blank" class="btn btn-sm btn-primary">
+                                Print
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

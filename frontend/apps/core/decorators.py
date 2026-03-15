@@ -4,13 +4,15 @@ Custom decorators for authentication and permissions
 from functools import wraps
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth.models import AnonymousUser
 
 
 def login_required_custom(view_func):
     """Custom login required decorator"""
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
-        if not request.session.get('token'):
+        # Check both Django auth and session token
+        if not request.user.is_authenticated and not request.session.get('token'):
             messages.error(request, 'Please login first')
             return redirect('auth:login')
         return view_func(request, *args, **kwargs)

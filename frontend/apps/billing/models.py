@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
+from .sequence_models import BillSequence, BillNumberLog, BillSequenceError
 
 
 class Bill(models.Model):
@@ -10,6 +11,15 @@ class Bill(models.Model):
         ('PARTIAL', 'Partial'),
         ('VOID', 'Void'),
     ]
+    
+    bill_number = models.CharField(
+        max_length=100,
+        unique=True,
+        db_index=True,
+        null=True,
+        blank=True,
+        help_text='Auto-generated unique bill number'
+    )
     
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     customer_name = models.CharField(max_length=255, blank=True, null=True)

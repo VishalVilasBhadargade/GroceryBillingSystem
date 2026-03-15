@@ -45,7 +45,7 @@ def customer_detail(request, customer_id):
 
 
 @login_required_custom
-@role_required('MANAGER', 'ADMIN')
+@role_required('CASHIER', 'MANAGER', 'ADMIN', 'ACCOUNTANT')
 def customer_create(request):
     """Create new customer"""
     if request.method == 'POST':
@@ -70,7 +70,7 @@ def customer_create(request):
 
 
 @login_required_custom
-@role_required('MANAGER', 'ADMIN')
+@role_required('CASHIER', 'MANAGER', 'ADMIN', 'ACCOUNTANT')
 def customer_update(request, customer_id):
     """Update customer"""
     customer = get_object_or_404(Customer, pk=customer_id)

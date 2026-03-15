@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "payments", indexes = {
-    @Index(name = "idx_bill_id", columnList = "bill_id"),
-    @Index(name = "idx_customer_id", columnList = "customer_id"),
-    @Index(name = "idx_payment_method", columnList = "payment_method"),
-    @Index(name = "idx_status", columnList = "status"),
-    @Index(name = "idx_reference_number", columnList = "reference_number")
+    @Index(name = "idx_payments_bill_id", columnList = "bill_id"),
+    @Index(name = "idx_payments_customer_id", columnList = "customer_id"),
+    @Index(name = "idx_payments_method", columnList = "payment_method"),
+    @Index(name = "idx_payments_status", columnList = "status"),
+    @Index(name = "idx_payments_reference", columnList = "reference_number")
 })
 @Data
 @NoArgsConstructor

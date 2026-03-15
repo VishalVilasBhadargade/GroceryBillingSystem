@@ -36,6 +36,7 @@ public class BillServiceImpl implements BillService {
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final WhatsAppNotificationService whatsAppNotificationService;
 
     @Override
     public BillDTO createBill(CreateBillDTO createBillDTO, Integer userId) {
@@ -93,6 +94,12 @@ public class BillServiceImpl implements BillService {
             item.setBill(savedBill);
         }
         billItemRepository.saveAll(billItems);
+
+        try {
+            whatsAppNotificationService.sendBillConfirmation(savedBill);
+        } catch (Exception ex) {
+            log.error("Failed to send WhatsApp bill notification for bill {}", savedBill.getBillId(), ex);
+        }
         
         log.info("Bill created successfully with ID: {}", savedBill.getBillId());
         return convertToDTO(savedBill);

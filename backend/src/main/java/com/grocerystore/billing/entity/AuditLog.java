@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "audit_logs", indexes = {
-    @Index(name = "idx_user_id", columnList = "user_id"),
-    @Index(name = "idx_timestamp", columnList = "timestamp"),
-    @Index(name = "idx_entity_type_id", columnList = "entity_type, entity_id"),
-    @Index(name = "idx_action", columnList = "action")
+    @Index(name = "idx_auditlog_user_id", columnList = "user_id"),
+    @Index(name = "idx_auditlog_timestamp", columnList = "timestamp"),
+    @Index(name = "idx_auditlog_entity", columnList = "entity_type, entity_id"),
+    @Index(name = "idx_auditlog_action", columnList = "action")
 })
 @Data
 @NoArgsConstructor

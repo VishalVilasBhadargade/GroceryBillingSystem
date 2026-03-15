@@ -52,7 +52,6 @@
     </div>
 </div>
 
-{% if daily_sales %}
 <div class="row mt-5">
     <div class="col-md-12">
         <div class="card">
@@ -63,22 +62,21 @@
                 <div class="row">
                     <div class="col-md-4">
                         <p class="text-muted">Total Sales</p>
-                        <h3>₹{{ daily_sales.totalRevenue }}</h3>
+                        <h3>₹<span id="totalRevenue">{{ daily_sales.totalRevenue|floatformat:2 }}</span></h3>
                     </div>
                     <div class="col-md-4">
                         <p class="text-muted">Total Bills</p>
-                        <h3>{{ daily_sales.totalBills }}</h3>
+                        <h3><span id="totalBills">{{ daily_sales.totalBills }}</span></h3>
                     </div>
                     <div class="col-md-4">
                         <p class="text-muted">Average Bill</p>
-                        <h3>₹{{ daily_sales.averageBill }}</h3>
+                        <h3>₹<span id="averageBill">{{ daily_sales.averageBill|floatformat:2 }}</span></h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
 
 {% if low_stock_products %}
 <div class="row mt-4">

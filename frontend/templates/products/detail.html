@@ -38,11 +38,11 @@
                     </tr>
                     <tr>
                         <th>Cost Price</th>
-                        <td>₹{{ product.cost_price }}</td>
+                        <td>₹{{ product.cost_price|floatformat:2 }}</td>
                     </tr>
                     <tr>
                         <th>Selling Price</th>
-                        <td>₹{{ product.selling_price }}</td>
+                        <td>₹{{ product.selling_price|floatformat:2 }}</td>
                     </tr>
                     <tr>
                         <th>Margin</th>

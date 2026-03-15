@@ -12,10 +12,10 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "products", indexes = {
-    @Index(name = "idx_sku", columnList = "sku"),
-    @Index(name = "idx_barcode", columnList = "barcode"),
-    @Index(name = "idx_category_id", columnList = "category_id"),
-    @Index(name = "idx_is_active", columnList = "is_active")
+    @Index(name = "idx_products_sku", columnList = "sku"),
+    @Index(name = "idx_products_barcode", columnList = "barcode"),
+    @Index(name = "idx_products_category_id", columnList = "category_id"),
+    @Index(name = "idx_products_is_active", columnList = "is_active")
 })
 @Data
 @NoArgsConstructor

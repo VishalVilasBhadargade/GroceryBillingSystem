@@ -13,6 +13,12 @@ logger = logging.getLogger(__name__)
 @require_http_methods(["GET", "POST"])
 def login_view(request):
     """User login view"""
+    # Clear any existing session when visiting login page without POST
+    if request.method == 'GET':
+        # Don't clear session on GET to allow returning users to stay logged in
+        # But clear it if they explicitly visit login page (we'll rely on logout for full clear)
+        pass
+    
     if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
@@ -26,10 +32,11 @@ def login_view(request):
         
         if user is not None:
             login(request, user)
-            # Store session info
+            # Store additional session info
             request.session['token'] = 'django-session'
-            request.session['user_role'] = 'ADMIN'
+            request.session['user_role'] = 'ADMIN'  # Default role
             request.session['username'] = user.username
+            request.session['user_id'] = user.id
             messages.success(request, f'Welcome, {user.first_name or user.username}!')
             logger.info(f"User {username} logged in successfully")
             return redirect('dashboard:index')
@@ -45,9 +52,11 @@ def login_view(request):
 def logout_view(request):
     """User logout view"""
     username = request.session.get('username', 'Unknown')
+    
+    # Clear all session data
     logout(request)
-    if 'token' in request.session:
-        request.session.flush()
+    request.session.flush()
+    
     logger.info(f"User {username} logged out")
     messages.success(request, 'Logout successful')
     

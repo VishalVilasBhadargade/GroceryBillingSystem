@@ -143,7 +143,7 @@
                             <div class="col-md-3">
                                 <div class="mb-0">
                                     <label class="form-label" style="font-size: 0.85rem;">Total (₹)</label>
-                                    <p class="form-control-plaintext"><strong>₹<span class="item-total">{{ item.total_price }}</span></strong></p>
+                                    <p class="form-control-plaintext"><strong>₹<span class="item-total">{{ item.total_price|floatformat:2 }}</span></strong></p>
                                 </div>
                             </div>
                         </div>
@@ -222,20 +222,20 @@
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-2">
                         <span>Subtotal:</span>
-                        <strong>₹<span id="subtotal">{{ bill.subtotal }}</span></strong>
+                        <strong>₹<span id="subtotal">{{ bill.subtotal|floatformat:2 }}</span></strong>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Discount:</span>
-                        <strong>-₹<span id="discount-display">{{ bill.discount }}</span></strong>
+                        <strong>-₹<span id="discount-display">{{ bill.discount|floatformat:2 }}</span></strong>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Tax:</span>
-                        <strong>+₹<span id="tax-display">{{ bill.tax }}</span></strong>
+                        <strong>+₹<span id="tax-display">{{ bill.tax|floatformat:2 }}</span></strong>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between">
                         <span style="font-size: 1.2rem;">Total:</span>
-                        <strong style="font-size: 1.2rem;">₹<span id="total">{{ bill.total }}</span></strong>
+                        <strong style="font-size: 1.2rem;">₹<span id="total">{{ bill.total|floatformat:2 }}</span></strong>
                     </div>
                 </div>
                 <div class="alert alert-info">

@@ -2176,3 +2176,564 @@ WARNING 2026-02-01 10:50:18,091 log 8868 6000 Not Found: /favicon.ico
 INFO 2026-02-01 10:51:44,385 autoreload 11804 776 Watching for file changes with StatReloader
 WARNING 2026-02-01 10:53:21,440 log 11804 5960 Not Found: /favicon.ico
 WARNING 2026-02-01 10:53:37,502 log 11804 8984 Not Found: /favicon.ico
+INFO 2026-02-06 12:33:09,139 autoreload 12064 15408 Watching for file changes with StatReloader
+WARNING 2026-02-06 12:33:50,764 log 12064 4528 Not Found: /favicon.ico
+INFO 2026-02-06 12:34:01,677 views 12064 4528 User admin logged out
+WARNING 2026-02-06 12:34:31,020 views 12064 4528 Failed login attempt for user: admin
+WARNING 2026-02-06 12:34:53,430 views 12064 4528 Failed login attempt for user: admin
+INFO 2026-02-06 12:35:06,264 views 12064 4528 User admin logged in successfully
+INFO 2026-02-06 12:51:03,544 views 12064 7380 User admin logged in successfully
+INFO 2026-02-06 13:42:53,694 autoreload 15024 4528 Watching for file changes with StatReloader
+WARNING 2026-02-06 13:42:56,782 log 15024 9176 Not Found: /favicon.ico
+INFO 2026-02-06 13:44:01,151 views 15024 9176 User admin logged in successfully
+INFO 2026-02-06 13:54:26,482 views 15024 3112 User admin logged in successfully
+INFO 2026-02-06 14:13:19,479 views 15024 8748 User admin logged in successfully
+INFO 2026-02-07 23:50:30,905 autoreload 5004 13888 Watching for file changes with StatReloader
+WARNING 2026-02-07 23:51:17,701 log 5004 13344 Not Found: /favicon.ico
+INFO 2026-02-08 00:04:02,024 views 5004 2872 User admin logged out
+INFO 2026-02-08 00:04:34,076 views 5004 2872 User admin logged in successfully
+ERROR 2026-02-08 00:10:05,507 log 5004 2872 Internal Server Error: /settings/profile/
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\core\decorators.py", line 16, in wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\settings\views.py", line 23, in user_profile
+    return render(request, 'settings/profile.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: settings/profile.html
+INFO 2026-02-08 00:16:21,761 autoreload 5004 13888 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:16:23,354 autoreload 4844 20056 Watching for file changes with StatReloader
+INFO 2026-02-08 00:27:37,558 autoreload 836 4804 Watching for file changes with StatReloader
+INFO 2026-02-08 00:28:37,863 autoreload 4844 20056 D:\grocery billing system\frontend\apps\core\api_client.py changed, reloading.
+INFO 2026-02-08 00:28:37,967 autoreload 836 4804 D:\grocery billing system\frontend\apps\core\api_client.py changed, reloading.
+INFO 2026-02-08 00:28:40,554 autoreload 276 1312 Watching for file changes with StatReloader
+INFO 2026-02-08 00:28:40,603 autoreload 19696 16468 Watching for file changes with StatReloader
+INFO 2026-02-08 00:30:13,389 autoreload 19696 16468 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:30:13,392 autoreload 276 1312 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:30:15,915 autoreload 15132 18464 Watching for file changes with StatReloader
+INFO 2026-02-08 00:30:15,926 autoreload 4672 16336 Watching for file changes with StatReloader
+INFO 2026-02-08 00:30:39,605 autoreload 4132 10376 Watching for file changes with StatReloader
+INFO 2026-02-08 00:32:14,091 views 15132 20160 Profile updated for user: admin
+INFO 2026-02-08 00:33:05,678 views 15132 13012 Password changed for user: admin
+INFO 2026-02-08 00:33:47,186 views 15132 9792 User admin logged out
+INFO 2026-02-08 00:34:02,683 views 15132 16004 User admin logged in successfully
+INFO 2026-02-08 00:35:04,384 views 15132 2712 Profile updated for user: admin
+INFO 2026-02-08 00:35:06,954 views 15132 2712 Profile updated for user: admin
+INFO 2026-02-08 00:35:07,556 views 15132 2712 Profile updated for user: admin
+INFO 2026-02-08 00:35:08,479 views 15132 2712 Profile updated for user: admin
+INFO 2026-02-08 00:35:21,094 views 15132 9624 Profile updated for user: admin
+INFO 2026-02-08 00:35:33,477 autoreload 4672 16336 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:35:33,558 autoreload 4132 10376 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:35:33,562 autoreload 15132 18464 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:35:36,248 autoreload 15332 7548 Watching for file changes with StatReloader
+INFO 2026-02-08 00:35:36,248 autoreload 15792 17384 Watching for file changes with StatReloader
+INFO 2026-02-08 00:35:36,278 autoreload 2696 10784 Watching for file changes with StatReloader
+INFO 2026-02-08 00:36:12,333 views 15332 6188 Profile updated for user: vishal
+INFO 2026-02-08 00:39:38,776 autoreload 15792 17384 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:39:38,805 autoreload 15332 7548 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:39:38,921 autoreload 2696 10784 D:\grocery billing system\frontend\apps\settings\views.py changed, reloading.
+INFO 2026-02-08 00:39:41,837 autoreload 17536 7004 Watching for file changes with StatReloader
+INFO 2026-02-08 00:39:41,873 autoreload 3624 15132 Watching for file changes with StatReloader
+INFO 2026-02-08 00:41:35,823 views 17536 10292 Profile updated for user: vishal with role: CASHIER
+INFO 2026-02-08 00:42:00,884 views 17536 18736 Profile updated for user: vishal with role: ACCOUNTANT
+INFO 2026-02-08 00:43:51,395 views 17536 18408 Profile updated for user: vishal with role: ADMIN
+INFO 2026-02-08 00:44:12,696 views 17536 18408 Profile updated for user: vishal with role: MANAGER
+INFO 2026-02-08 00:45:47,033 views 17536 8384 Profile updated for user: vishal with role: ADMIN
+INFO 2026-02-08 00:45:54,230 views 17536 17928 User vishal logged out
+INFO 2026-02-08 00:46:14,073 views 17536 17928 User vishal logged in successfully
+INFO 2026-02-08 00:46:35,783 views 17536 17928 Profile updated for user: vishal with role: CASHIER
+INFO 2026-02-08 00:49:26,552 autoreload 18812 6156 D:\grocery billing system\frontend\apps\billing\urls.py changed, reloading.
+INFO 2026-02-08 00:49:26,604 autoreload 17536 7004 D:\grocery billing system\frontend\apps\billing\urls.py changed, reloading.
+INFO 2026-02-08 00:49:26,620 autoreload 3624 15132 D:\grocery billing system\frontend\apps\billing\urls.py changed, reloading.
+INFO 2026-02-08 00:49:28,742 autoreload 9264 13528 Watching for file changes with StatReloader
+INFO 2026-02-08 00:49:28,781 autoreload 7396 20180 Watching for file changes with StatReloader
+INFO 2026-02-08 00:49:28,825 autoreload 2216 15600 Watching for file changes with StatReloader
+INFO 2026-02-08 00:50:12,045 autoreload 9264 13528 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 00:50:13,255 autoreload 7396 20180 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 00:50:13,256 autoreload 2216 15600 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 00:50:14,122 autoreload 8732 15524 Watching for file changes with StatReloader
+INFO 2026-02-08 00:50:15,130 autoreload 20148 10412 Watching for file changes with StatReloader
+INFO 2026-02-08 00:50:15,186 autoreload 15808 11232 Watching for file changes with StatReloader
+INFO 2026-02-08 00:50:18,626 autoreload 8732 15524 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 00:50:18,655 autoreload 20148 10412 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 00:50:18,841 autoreload 15808 11232 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 00:50:20,560 autoreload 19480 15956 Watching for file changes with StatReloader
+INFO 2026-02-08 00:50:20,609 autoreload 1600 10352 Watching for file changes with StatReloader
+INFO 2026-02-08 00:50:20,757 autoreload 5420 1864 Watching for file changes with StatReloader
+WARNING 2026-02-08 00:51:28,480 log 19480 18848 Not Found: /billing/[bill-id]/receipt/
+WARNING 2026-02-08 00:52:13,647 log 19480 18848 Not Found: /billing/[bill-id]/receipt/
+WARNING 2026-02-08 00:52:26,839 log 19480 18848 Not Found: /billing/[bill-id]/receipt/
+INFO 2026-02-08 00:53:25,670 autoreload 1600 10352 D:\grocery billing system\frontend\apps\auth\views.py changed, reloading.
+INFO 2026-02-08 00:53:25,790 autoreload 5420 1864 D:\grocery billing system\frontend\apps\auth\views.py changed, reloading.
+INFO 2026-02-08 00:53:26,161 autoreload 19480 15956 D:\grocery billing system\frontend\apps\core\decorators.py changed, reloading.
+INFO 2026-02-08 00:53:28,734 autoreload 4148 420 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:28,772 autoreload 6000 17400 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:29,020 autoreload 14512 11308 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:44,468 autoreload 6000 17400 D:\grocery billing system\frontend\apps\auth\views.py changed, reloading.
+INFO 2026-02-08 00:53:44,474 autoreload 14512 11308 D:\grocery billing system\frontend\apps\core\decorators.py changed, reloading.
+INFO 2026-02-08 00:53:44,486 autoreload 4148 420 D:\grocery billing system\frontend\apps\core\decorators.py changed, reloading.
+INFO 2026-02-08 00:53:46,644 autoreload 9480 17852 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:46,678 autoreload 13488 7192 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:46,895 autoreload 9168 11900 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:53,200 autoreload 13488 7192 D:\grocery billing system\frontend\apps\dashboard\views.py changed, reloading.
+INFO 2026-02-08 00:53:53,212 autoreload 9480 17852 D:\grocery billing system\frontend\apps\dashboard\urls.py changed, reloading.
+INFO 2026-02-08 00:53:53,276 autoreload 9168 11900 D:\grocery billing system\frontend\apps\dashboard\urls.py changed, reloading.
+INFO 2026-02-08 00:53:54,926 autoreload 2456 14856 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:54,934 autoreload 13012 7668 Watching for file changes with StatReloader
+INFO 2026-02-08 00:53:54,981 autoreload 13392 16016 Watching for file changes with StatReloader
+INFO 2026-02-08 00:55:03,530 autoreload 17504 14600 Watching for file changes with StatReloader
+ERROR 2026-02-08 00:56:53,386 log 17504 13664 Internal Server Error: /billing/37/receipt/
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'else'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\core\decorators.py", line 18, in wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\billing\views.py", line 202, in print_receipt
+    return render(request, 'billing/receipt.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\backends\django.py", line 33, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 293, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 232, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 558, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 304: 'else', expected 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 00:57:58,144 log 17504 13664 Internal Server Error: /billing/37/receipt/
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'else'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\core\decorators.py", line 18, in wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\billing\views.py", line 202, in print_receipt
+    return render(request, 'billing/receipt.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\backends\django.py", line 33, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 293, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 232, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 558, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 304: 'else', expected 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 00:58:35,277 log 17504 13664 Internal Server Error: /billing/1/receipt/
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'else'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\core\decorators.py", line 18, in wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\billing\views.py", line 202, in print_receipt
+    return render(request, 'billing/receipt.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\backends\django.py", line 33, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 293, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 232, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 558, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 304: 'else', expected 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 00:59:23,608 log 17504 13664 Internal Server Error: /billing/36/receipt/
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'else'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\core\decorators.py", line 18, in wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\grocery billing system\frontend\apps\billing\views.py", line 202, in print_receipt
+    return render(request, 'billing/receipt.html', context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\backends\django.py", line 33, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 293, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\loader_tags.py", line 232, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python312\Lib\site-packages\django\template\base.py", line 558, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 304: 'else', expected 'endblock'. Did you forget to register or load this tag?
+INFO 2026-02-08 01:00:40,607 autoreload 7716 7264 Watching for file changes with StatReloader
+INFO 2026-02-08 01:15:21,117 autoreload 7716 7264 D:\grocery billing system\frontend\apps\products\models.py changed, reloading.
+INFO 2026-02-08 01:15:22,964 autoreload 18960 16720 Watching for file changes with StatReloader
+INFO 2026-02-08 01:15:54,396 autoreload 18960 16720 D:\grocery billing system\frontend\apps\settings\models.py changed, reloading.
+INFO 2026-02-08 01:15:56,246 autoreload 18520 18708 Watching for file changes with StatReloader
+INFO 2026-02-08 01:18:43,147 autoreload 7800 19904 Watching for file changes with StatReloader
+INFO 2026-02-08 01:23:44,777 views 18520 3108 Profile updated for user: vishal with role: MANAGER
+INFO 2026-02-08 01:29:49,762 views 18520 3108 Profile updated for user: vishal with role: ADMIN
+INFO 2026-02-08 01:34:11,415 autoreload 7800 19904 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:34:11,441 autoreload 18520 18708 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:34:13,478 autoreload 8856 15504 Watching for file changes with StatReloader
+INFO 2026-02-08 01:34:13,480 autoreload 10356 3860 Watching for file changes with StatReloader
+INFO 2026-02-08 01:34:20,106 autoreload 10356 3860 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:34:20,139 autoreload 8856 15504 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:34:21,680 autoreload 18804 32 Watching for file changes with StatReloader
+INFO 2026-02-08 01:34:21,701 autoreload 17564 14308 Watching for file changes with StatReloader
+INFO 2026-02-08 01:36:23,957 autoreload 17564 14308 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:36:23,985 autoreload 18804 32 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:36:26,273 autoreload 11864 19380 Watching for file changes with StatReloader
+INFO 2026-02-08 01:36:26,280 autoreload 13256 14028 Watching for file changes with StatReloader
+INFO 2026-02-08 01:37:21,796 autoreload 13256 14028 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:37:21,829 autoreload 11864 19380 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:37:23,887 autoreload 8376 7080 Watching for file changes with StatReloader
+INFO 2026-02-08 01:37:23,896 autoreload 6740 7036 Watching for file changes with StatReloader
+INFO 2026-02-08 01:37:27,670 autoreload 6740 7036 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:37:27,720 autoreload 8376 7080 D:\grocery billing system\frontend\apps\billing\models.py changed, reloading.
+INFO 2026-02-08 01:37:29,291 autoreload 14848 17884 Watching for file changes with StatReloader
+INFO 2026-02-08 01:37:29,330 autoreload 5560 14020 Watching for file changes with StatReloader
+INFO 2026-02-08 01:38:20,245 autoreload 5560 14020 D:\grocery billing system\frontend\apps\billing\migrations\0005_bill_bill_number.py changed, reloading.
+INFO 2026-02-08 01:38:20,259 autoreload 14848 17884 D:\grocery billing system\frontend\apps\billing\migrations\0005_bill_bill_number.py changed, reloading.
+INFO 2026-02-08 01:38:22,283 autoreload 7220 13528 Watching for file changes with StatReloader
+INFO 2026-02-08 01:38:22,311 autoreload 13252 16248 Watching for file changes with StatReloader
+INFO 2026-02-08 01:39:46,967 sequence_service 2540 8328 Generated bill number: 20260207-0001
+INFO 2026-02-08 01:39:46,985 sequence_service 2540 8328 Generated bill number: 20260207-0002
+INFO 2026-02-08 01:39:47,004 sequence_service 2540 8328 Generated bill number: 20260207-0003
+WARNING 2026-02-08 02:03:59,552 log 7220 16392 Not Found: /billing/list/
+WARNING 2026-02-08 02:11:43,695 log 7220 16392 Not Found: /billing/list/
+INFO 2026-02-08 16:51:56,567 autoreload 18924 2540 Watching for file changes with StatReloader
+WARNING 2026-02-08 16:52:42,752 log 18924 17548 Not Found: /favicon.ico
+INFO 2026-02-08 16:52:56,168 views 18924 10832 User vishal logged in successfully
+WARNING 2026-02-08 17:07:37,898 log 18924 3780 Not Found: /favicon.ico
+INFO 2026-02-08 17:31:31,877 views 18924 17112 User vishal logged out
+WARNING 2026-02-08 17:31:46,345 views 18924 17112 Failed login attempt for user: admin
+INFO 2026-02-08 17:32:02,313 views 18924 17112 User vishal logged in successfully
+INFO 2026-02-08 17:35:28,412 views 18924 18296 User Unknown logged out
+WARNING 2026-02-08 17:35:28,731 log 18924 18296 Not Found: /favicon.ico
+INFO 2026-02-08 17:35:49,350 views 18924 1316 User vishal logged in successfully
+WARNING 2026-02-08 17:36:09,405 log 18924 16840 Not Found: /favicon.ico
+INFO 2026-02-08 17:36:37,708 views 18924 12080 User vishal logged out
+WARNING 2026-02-08 17:36:38,064 log 18924 12080 Not Found: /favicon.ico
+WARNING 2026-02-08 17:37:14,965 views 18924 12080 Failed login attempt for user: cashier
+INFO 2026-02-08 17:37:29,495 views 18924 12080 User vishal logged in successfully
+WARNING 2026-02-08 17:43:31,754 log 18924 19248 Not Found: /favicon.ico
+INFO 2026-02-08 17:54:00,335 autoreload 18924 2540 D:\grocery billing system\frontend\apps\customers\views.py changed, reloading.
+INFO 2026-02-08 17:54:03,043 autoreload 12024 1812 Watching for file changes with StatReloader
+INFO 2026-02-08 17:54:37,165 autoreload 12024 1812 D:\grocery billing system\frontend\apps\dashboard\views.py changed, reloading.
+INFO 2026-02-08 17:54:39,134 autoreload 20716 15412 Watching for file changes with StatReloader
+INFO 2026-02-08 17:54:53,626 autoreload 20716 15412 D:\grocery billing system\frontend\config\context_processors.py changed, reloading.
+INFO 2026-02-08 17:54:55,130 autoreload 9792 13172 Watching for file changes with StatReloader
+INFO 2026-02-08 17:55:28,337 autoreload 9792 13172 D:\grocery billing system\frontend\config\settings.py changed, reloading.
+INFO 2026-02-08 17:55:30,131 autoreload 16020 1308 Watching for file changes with StatReloader
+INFO 2026-02-08 17:56:41,008 autoreload 16020 1308 D:\grocery billing system\frontend\config\settings.py changed, reloading.
+INFO 2026-02-08 17:56:43,061 autoreload 724 19932 Watching for file changes with StatReloader
+INFO 2026-02-08 18:10:17,146 autoreload 724 19932 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 18:10:20,021 autoreload 468 20392 Watching for file changes with StatReloader
+INFO 2026-02-08 18:10:26,404 autoreload 468 20392 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 18:10:28,608 autoreload 11456 16096 Watching for file changes with StatReloader
+INFO 2026-02-08 18:28:04,199 autoreload 11456 16096 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-02-08 18:28:08,059 autoreload 15368 14520 Watching for file changes with StatReloader
+INFO 2026-03-07 12:26:08,349 autoreload 896 8876 Watching for file changes with StatReloader
+WARNING 2026-03-07 12:29:27,760 log 896 8684 Not Found: /favicon.ico
+WARNING 2026-03-07 12:29:44,408 views 896 2404 Failed login attempt for user: admin
+WARNING 2026-03-07 12:30:01,951 views 896 2404 Failed login attempt for user: vishal
+WARNING 2026-03-07 12:30:27,127 views 896 2404 Failed login attempt for user: vishal
+WARNING 2026-03-07 12:33:10,101 views 896 2404 Failed login attempt for user: admin
+WARNING 2026-03-07 12:33:31,033 views 896 2404 Failed login attempt for user: vishal
+INFO 2026-03-07 12:33:42,100 views 896 2404 User vishal logged in successfully
+INFO 2026-03-07 18:12:10,540 autoreload 896 8876 D:\grocery billing system\frontend\apps\dashboard\views.py changed, reloading.
+INFO 2026-03-07 18:12:13,475 autoreload 13580 13944 Watching for file changes with StatReloader
+INFO 2026-03-07 18:14:59,367 views 13580 14388 User vishal logged out
+INFO 2026-03-07 18:15:23,982 views 13580 14388 User vishal logged in successfully
+INFO 2026-03-13 11:45:55,062 autoreload 12600 15176 Watching for file changes with StatReloader
+WARNING 2026-03-13 11:49:34,235 log 12600 13520 Not Found: /favicon.ico
+INFO 2026-03-13 12:00:48,717 autoreload 12600 15176 D:\grocery billing system\frontend\apps\reports\views.py changed, reloading.
+INFO 2026-03-13 12:00:50,733 autoreload 12076 2972 Watching for file changes with StatReloader
+INFO 2026-03-13 12:13:55,665 autoreload 12076 2972 D:\grocery billing system\frontend\apps\reports\views.py changed, reloading.
+INFO 2026-03-13 12:13:57,796 autoreload 2308 12132 Watching for file changes with StatReloader
+INFO 2026-03-13 12:17:36,379 autoreload 2308 12132 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:17:38,128 autoreload 10900 5364 Watching for file changes with StatReloader
+INFO 2026-03-13 12:17:40,854 autoreload 10900 5364 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:17:42,078 autoreload 3804 1568 Watching for file changes with StatReloader
+INFO 2026-03-13 12:20:28,526 autoreload 3804 1568 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:20:30,026 autoreload 7860 10880 Watching for file changes with StatReloader
+INFO 2026-03-13 12:20:33,128 autoreload 7860 10880 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:20:34,599 autoreload 13092 13868 Watching for file changes with StatReloader
+ERROR 2026-03-13 12:25:56,633 views 13092 1608 Failed to edit bill
+Traceback (most recent call last):
+  File "D:\grocery billing system\frontend\apps\billing\views.py", line 332, in edit_bill
+    bill.remaining_amount = max(bill.total - bill.amount_paid, 0)
+                                ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'float' and 'decimal.Decimal'
+INFO 2026-03-13 12:27:29,405 autoreload 13092 13868 D:\grocery billing system\frontend\apps\reports\views.py changed, reloading.
+INFO 2026-03-13 12:27:31,060 autoreload 8924 1680 Watching for file changes with StatReloader
+INFO 2026-03-13 12:27:39,551 autoreload 8924 1680 D:\grocery billing system\frontend\apps\reports\views.py changed, reloading.
+INFO 2026-03-13 12:27:40,837 autoreload 1512 9196 Watching for file changes with StatReloader
+INFO 2026-03-13 12:40:59,477 autoreload 1512 9196 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:41:01,978 autoreload 13284 14712 Watching for file changes with StatReloader
+INFO 2026-03-13 12:41:35,909 autoreload 13284 14712 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:41:37,512 autoreload 14792 15192 Watching for file changes with StatReloader
+INFO 2026-03-13 12:41:40,176 autoreload 14792 15192 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:41:41,528 autoreload 5904 6816 Watching for file changes with StatReloader
+INFO 2026-03-13 12:58:39,298 autoreload 5904 6816 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 12:58:41,305 autoreload 3840 14504 Watching for file changes with StatReloader
+ERROR 2026-03-13 13:02:57,582 views 3840 13156 Failed to create bill
+Traceback (most recent call last):
+  File "D:\grocery billing system\frontend\apps\billing\views.py", line 127, in create_bill
+    raise ValueError('Insufficient stock')
+ValueError: Insufficient stock
+INFO 2026-03-13 13:06:17,942 autoreload 3840 14504 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 13:06:20,289 autoreload 9360 10792 Watching for file changes with StatReloader
+INFO 2026-03-13 13:07:21,943 autoreload 9360 10792 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 13:07:24,052 autoreload 5988 3440 Watching for file changes with StatReloader
+INFO 2026-03-13 13:07:43,419 autoreload 5988 3440 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 13:07:44,924 autoreload 11008 10164 Watching for file changes with StatReloader
+INFO 2026-03-13 13:12:09,381 autoreload 11008 10164 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 13:12:10,982 autoreload 13500 7088 Watching for file changes with StatReloader
+INFO 2026-03-13 13:13:23,876 autoreload 13500 7088 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 13:13:25,072 autoreload 12964 14700 Watching for file changes with StatReloader
+INFO 2026-03-13 14:27:50,928 autoreload 12964 14700 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:27:52,866 autoreload 11916 14156 Watching for file changes with StatReloader
+INFO 2026-03-13 14:27:56,394 autoreload 11916 14156 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:27:57,383 autoreload 13128 3564 Watching for file changes with StatReloader
+INFO 2026-03-13 14:28:11,767 autoreload 13128 3564 D:\grocery billing system\frontend\apps\billing\urls.py changed, reloading.
+INFO 2026-03-13 14:28:12,720 autoreload 16776 4840 Watching for file changes with StatReloader
+INFO 2026-03-13 14:28:25,549 autoreload 16776 4840 D:\grocery billing system\frontend\apps\billing\urls.py changed, reloading.
+INFO 2026-03-13 14:28:26,576 autoreload 2056 1608 Watching for file changes with StatReloader
+INFO 2026-03-13 14:29:35,270 autoreload 2056 1608 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:29:36,300 autoreload 12192 10368 Watching for file changes with StatReloader
+INFO 2026-03-13 14:29:39,053 autoreload 12192 10368 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:29:40,020 autoreload 960 12540 Watching for file changes with StatReloader
+INFO 2026-03-13 14:34:40,708 autoreload 960 12540 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:34:43,176 autoreload 6680 16416 Watching for file changes with StatReloader
+INFO 2026-03-13 14:34:50,608 autoreload 6680 16416 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:34:52,265 autoreload 3096 9408 Watching for file changes with StatReloader
+INFO 2026-03-13 14:34:57,922 autoreload 3096 9408 D:\grocery billing system\frontend\apps\billing\views.py changed, reloading.
+INFO 2026-03-13 14:34:59,214 autoreload 14460 1320 Watching for file changes with StatReloader
+INFO 2026-03-14 14:43:21,864 autoreload 2176 3148 Watching for file changes with StatReloader
+WARNING 2026-03-14 15:15:27,303 log 2176 1660 Not Found: /favicon.ico
+WARNING 2026-03-14 15:24:37,058 log 2176 13160 Not Found: /favicon.ico

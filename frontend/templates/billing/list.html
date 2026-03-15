@@ -39,8 +39,8 @@
                         <td><strong>#{{ bill.id }}</strong></td>
                         <td>{{ bill.created_at|date:"d-m-Y" }}</td>
                         <td>{{ bill.customer_name }}</td>
-                        <td>₹{{ bill.total }}</td>
-                        <td><span class="text-success">₹{{ bill.amount_paid }}</span></td>
+                        <td>₹{{ bill.total|floatformat:2 }}</td>
+                        <td><span class="text-success">₹{{ bill.amount_paid|floatformat:2 }}</span></td>
                         <td>
                             {% if bill.remaining_amount > 0.01 %}
                                 <span class="badge bg-danger">₹{{ bill.remaining_amount|floatformat:2 }}</span>

@@ -18,10 +18,10 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
     
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:grocery_billing_system_secret_key_change_in_production_environment_with_strong_key}")
     private String jwtSecret;
     
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration:86400000}")
     private long jwtExpirationMs;
     
     /**

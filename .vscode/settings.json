@@ -1,3 +1,9 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "search.exclude": {
+        "": true
+    },
+    "files.exclude": {
+        "": true
+    }
 }

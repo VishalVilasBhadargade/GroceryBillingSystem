@@ -18,26 +18,46 @@ logger = logging.getLogger(__name__)
 def daily_sales_report(request):
     """Daily sales report"""
     today = datetime.now().date()
-    
-    bills = Bill.objects.filter(created_at__date=today, status='PAID')
-    total_sales = bills.aggregate(total=Sum('total'))['total'] or 0
+    date_str = request.GET.get('date')
+    report_date = today
+
+    if date_str:
+        try:
+            report_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, 'Invalid date format. Please use YYYY-MM-DD.')
+
+    bills = Bill.objects.filter(
+        created_at__date=report_date,
+        status__in=['PAID', 'PARTIAL', 'PENDING']
+    ).prefetch_related('items')
+    total_revenue = bills.aggregate(total=Sum('total'))['total'] or 0
     total_bills = bills.count()
     total_items = BillItem.objects.filter(bill__in=bills).aggregate(total=Sum('quantity'))['total'] or 0
-    
+    average_bill = total_revenue / total_bills if total_bills > 0 else 0
+    pending_amount = bills.aggregate(total=Sum('remaining_amount'))['total'] or 0
+
     top_products = BillItem.objects.filter(bill__in=bills).values('product_name').annotate(
         total_quantity=Sum('quantity'),
         total_revenue=Sum('total_price')
     ).order_by('-total_quantity')[:10]
-    
-    context = {
-        'date': today,
+
+    report = {
+        'totalRevenue': total_revenue,
+        'totalBills': total_bills,
+        'totalItems': total_items,
+        'averageBill': average_bill,
+        'pendingAmount': pending_amount,
+        'topProducts': top_products,
         'bills': bills,
-        'total_sales': total_sales,
-        'total_bills': total_bills,
-        'total_items': total_items,
-        'top_products': top_products,
+        'includedStatuses': ['PAID', 'PARTIAL', 'PENDING'],
     }
-    
+
+    context = {
+        'date': report_date,
+        'report': report,
+    }
+
     return render(request, 'reports/daily_sales.html', context)
 
 

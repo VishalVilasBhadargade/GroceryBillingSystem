@@ -38,6 +38,7 @@ public class SecurityConfig {
             .and()
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
+                .requestMatchers("/api/v1/test/**", "/test/**").permitAll()
                 .requestMatchers("/health", "/info").permitAll()
                 .anyRequest().authenticated()
             )

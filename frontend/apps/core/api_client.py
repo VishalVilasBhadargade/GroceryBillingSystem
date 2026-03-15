@@ -253,3 +253,20 @@ class APIClient:
 
 # Global API client instance
 api_client = APIClient()
+
+
+def backend_api_call(endpoint, method='GET', data=None, params=None, token=None):
+    """
+    Helper function to make backend API calls
+    
+    Args:
+        endpoint: API endpoint (e.g., '/api/v1/users/1')
+        method: HTTP method (GET, POST, PUT, DELETE)
+        data: Request body data
+        params: Query parameters
+        token: JWT token (if not provided, will be taken from session)
+    
+    Returns:
+        API response or None
+    """
+    return api_client._make_request(method, endpoint, token=token, data=data, params=params)

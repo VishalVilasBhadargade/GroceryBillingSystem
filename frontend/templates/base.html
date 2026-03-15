@@ -14,7 +14,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'dashboard:index' %}">
-                <i class="fas fa-shopping-cart"></i> Grocery Billing System
+                <i class="fas fa-shopping-cart"></i> श्री साईकृपा किराणा
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -30,7 +30,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="productsDropdown">
                             <li><a class="dropdown-item" href="{% url 'products:list' %}">View Products</a></li>
-                            {% if user_role in 'INVENTORY_MANAGER,ADMIN' %}
+                            {% if is_inventory %}
                             <li><a class="dropdown-item" href="{% url 'products:create' %}">Add Product</a></li>
                             {% endif %}
                         </ul>
@@ -41,7 +41,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="billingDropdown">
                             <li><a class="dropdown-item" href="{% url 'billing:list' %}">Bills</a></li>
-                            {% if user_role in 'CASHIER,MANAGER,ADMIN' %}
+                            {% if can_create_bill %}
                             <li><a class="dropdown-item" href="{% url 'billing:create' %}">Create Bill</a></li>
                             {% endif %}
                         </ul>
@@ -52,7 +52,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="customersDropdown">
                             <li><a class="dropdown-item" href="{% url 'customers:list' %}">View Customers</a></li>
-                            {% if user_role in 'MANAGER,ADMIN' %}
+                            {% if can_add_customer %}
                             <li><a class="dropdown-item" href="{% url 'customers:create' %}">Add Customer</a></li>
                             {% endif %}
                         </ul>
@@ -101,7 +101,7 @@
     </div>
 
     <footer class="footer mt-5 py-3 bg-dark text-white text-center">
-        <p>&copy; 2024 Grocery Billing System. All rights reserved.</p>
+        <p>&copy; 2024 श्री साईकृपा किराणा. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

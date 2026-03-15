@@ -3,17 +3,153 @@ Billing/Bill management views
 """
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from django.db import transaction
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
+from urllib.parse import quote
 from apps.core.decorators import login_required_custom, role_required
+from apps.customers.models import Customer
 from .models import Bill, BillItem, Payment
 from apps.products.models import Product
 import json
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _build_simple_pdf(lines):
+    """Build a minimal PDF byte stream with plain text lines."""
+    escaped_lines = []
+    for line in lines:
+        safe = str(line).replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+        escaped_lines.append(safe)
+
+    y = 760
+    commands = ["BT", "/F1 11 Tf", "40 800 Td"]
+    for i, line in enumerate(escaped_lines):
+        if i == 0:
+            commands.append(f"({line}) Tj")
+        else:
+            commands.append(f"40 {y} Td ({line}) Tj")
+        y -= 16
+
+    commands.append("ET")
+    content_stream = "\n".join(commands).encode('latin-1', errors='replace')
+
+    objects = []
+    objects.append(b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n")
+    objects.append(b"2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n")
+    objects.append(
+        b"3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] "
+        b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n"
+    )
+    objects.append(b"4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n")
+    objects.append(
+        f"5 0 obj\n<< /Length {len(content_stream)} >>\nstream\n".encode('latin-1')
+        + content_stream
+        + b"\nendstream\nendobj\n"
+    )
+
+    pdf = bytearray(b"%PDF-1.4\n")
+    offsets = [0]
+    for obj in objects:
+        offsets.append(len(pdf))
+        pdf.extend(obj)
+
+    xref_start = len(pdf)
+    pdf.extend(f"xref\n0 {len(objects) + 1}\n".encode('latin-1'))
+    pdf.extend(b"0000000000 65535 f \n")
+    for offset in offsets[1:]:
+        pdf.extend(f"{offset:010d} 00000 n \n".encode('latin-1'))
+
+    pdf.extend(
+        (
+            f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\n"
+            f"startxref\n{xref_start}\n%%EOF"
+        ).encode('latin-1')
+    )
+    return bytes(pdf)
+
+
+def _normalize_phone(phone):
+    """Normalize phone numbers by removing spaces, dashes, and extra leading zeros"""
+    if not phone:
+        return None
+    phone_str = str(phone).strip().replace(' ', '').replace('-', '').replace('+', '')
+    # Remove leading 0 from Indian numbers
+    if phone_str.startswith('0'):
+        phone_str = phone_str[1:]
+    return phone_str if phone_str else None
+
+
+def _get_customer_for_bill(customer_phone, customer_email, customer_name):
+    # Try matching by phone (with normalization)
+    if customer_phone:
+        customer_phone_norm = _normalize_phone(customer_phone)
+        if customer_phone_norm:
+            # Search across all customers with normalized phone comparison
+            for customer in Customer.objects.all():
+                if _normalize_phone(customer.phone) == customer_phone_norm:
+                    return customer
+
+    # Try matching by email
+    if customer_email:
+        customer = Customer.objects.filter(email__iexact=customer_email).first()
+        if customer:
+            return customer
+
+    # Try matching by name
+    if customer_name:
+        return Customer.objects.filter(customer_name__iexact=customer_name).first()
+
+    return None
+
+
+def _apply_customer_loyalty(customer, amount_paid):
+    if not customer:
+        return
+
+    amount = Decimal(str(amount_paid or 0))
+    if amount <= 0:
+        return
+
+    customer.total_spent = (customer.total_spent or Decimal('0')) + amount
+    customer.loyalty_points = int(customer.total_spent // Decimal('100'))
+    customer.save(update_fields=['total_spent', 'loyalty_points', 'updated_at'])
+
+
+def _build_whatsapp_receipt_url(bill):
+    """Build a WhatsApp deep link with bill summary and product list text."""
+    phone = _normalize_phone(bill.customer_phone)
+    if not phone:
+        return None
+
+    # Keep only digits and normalize to India country code format for wa.me
+    phone_digits = ''.join(ch for ch in phone if ch.isdigit())
+    if len(phone_digits) == 10:
+        phone_digits = f"91{phone_digits}"
+
+    customer_name = bill.customer_name or 'Customer'
+    item_lines = []
+    for item in bill.items.all():
+        item_lines.append(f"- {item.product_name} x {item.quantity} = रु. {item.total_price:.2f}")
+
+    product_list_text = "\n".join(item_lines) if item_lines else "- वस्तू उपलब्ध नाहीत"
+
+    message = (
+        f"नमस्कार {customer_name},\n"
+        f"श्री साईकृपा किराणा कडून आपली बिल पावती:\n"
+        f"बिल क्रमांक: {bill.id}\n"
+        f"दिनांक: {bill.created_at.strftime('%d/%m/%Y %H:%M')}\n"
+        f"वस्तूंची यादी:\n{product_list_text}\n"
+        f"एकूण रक्कम: रु. {bill.total:.2f}\n"
+        f"भरलेली रक्कम: रु. {bill.amount_paid:.2f}\n"
+        f"बाकी रक्कम: रु. {bill.remaining_amount:.2f}\n"
+        f"\n"
+        f"मदतीसाठी WhatsApp: +91 9673311365"
+    )
+    return f"https://wa.me/{phone_digits}?text={quote(message)}"
 
 
 @login_required_custom
@@ -114,6 +250,13 @@ def create_bill(request):
                     line['product'].quantity_on_hand -= line['quantity']
                     line['product'].save()
 
+                customer = _get_customer_for_bill(
+                    bill.customer_phone,
+                    bill.customer_email,
+                    bill.customer_name
+                )
+                _apply_customer_loyalty(customer, amount_paid)
+
             messages.success(request, f'Bill #{bill.id} created successfully')
             return redirect('billing:detail', bill_id=bill.id)
         except json.JSONDecodeError as e:
@@ -190,8 +333,57 @@ def bill_list(request):
 def bill_detail(request, bill_id):
     """View bill details"""
     bill = get_object_or_404(Bill, pk=bill_id)
-    context = {'bill': bill}
+    context = {
+        'bill': bill,
+        'whatsapp_receipt_url': _build_whatsapp_receipt_url(bill),
+    }
     return render(request, 'billing/detail.html', context)
+
+
+@login_required_custom
+def print_receipt(request, bill_id):
+    """Print bill receipt in thermal printer format"""
+    bill = get_object_or_404(Bill, pk=bill_id)
+    context = {
+        'bill': bill,
+        'whatsapp_receipt_url': _build_whatsapp_receipt_url(bill),
+    }
+    return render(request, 'billing/receipt.html', context)
+
+
+@login_required_custom
+def print_receipt_pdf(request, bill_id):
+    """Return printable PDF receipt for a bill."""
+    bill = get_object_or_404(Bill, pk=bill_id)
+
+    lines = [
+        "Shri Saikripa Kirana - Receipt",
+        f"Bill #: {bill.id}",
+        f"Date: {bill.created_at.strftime('%d/%m/%Y %H:%M')}",
+        f"Customer: {bill.customer_name or 'Walk-in Customer'}",
+        "----------------------------------------",
+    ]
+
+    for item in bill.items.all():
+        lines.append(f"{item.product_name} x {item.quantity} = Rs. {item.total_price:.2f}")
+
+    lines.extend([
+        "----------------------------------------",
+        f"Subtotal: Rs. {bill.subtotal:.2f}",
+        f"Discount: Rs. {bill.discount:.2f}",
+        f"Tax: Rs. {bill.tax:.2f}",
+        f"Total: Rs. {bill.total:.2f}",
+        f"Paid: Rs. {bill.amount_paid:.2f}",
+        f"Balance: Rs. {bill.remaining_amount:.2f}",
+        f"Status: {bill.status}",
+        "----------------------------------------",
+        "WhatsApp Support: +91 9673311365",
+    ])
+
+    pdf_bytes = _build_simple_pdf(lines)
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="bill_{bill.id}_receipt.pdf"'
+    return response
 
 
 @login_required_custom
@@ -290,25 +482,37 @@ def edit_bill(request, bill_id):
 
 
 @login_required_custom
-@role_required('CASHIER', 'MANAGER', 'ADMIN')
+@role_required('CASHIER', 'MANAGER', 'ACCOUNTANT', 'ADMIN')
 def record_payment(request, bill_id):
     """Record payment for a bill"""
     bill = get_object_or_404(Bill, pk=bill_id)
     
     if request.method == 'POST':
         try:
-            # Use Decimal for precise financial calculations
-            amount_paid_now = Decimal(str(request.POST.get('amount_paid', 0)))
-            
-            if amount_paid_now <= 0:
-                messages.error(request, 'Payment amount must be greater than 0')
-                return redirect('billing:detail', bill_id=bill_id)
-            
-            # Round to 2 decimal places
-            amount_paid_now = amount_paid_now.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-            
             # Get current remaining amount
-            current_remaining = bill.remaining_amount
+            current_remaining = Decimal(str(bill.remaining_amount or 0)).quantize(
+                Decimal('0.01'), rounding=ROUND_HALF_UP
+            )
+
+            if current_remaining <= 0:
+                messages.info(request, 'This bill is already fully paid')
+                return redirect('billing:detail', bill_id=bill_id)
+
+            is_direct_full_payment = request.POST.get('direct_pay_full') == '1'
+
+            if is_direct_full_payment:
+                # One-click full settlement for pending/partial bills.
+                amount_paid_now = current_remaining
+            else:
+                # Use Decimal for precise financial calculations
+                amount_paid_now = Decimal(str(request.POST.get('amount_paid', 0)))
+
+                if amount_paid_now <= 0:
+                    messages.error(request, 'Payment amount must be greater than 0')
+                    return redirect('billing:detail', bill_id=bill_id)
+
+                # Round to 2 decimal places
+                amount_paid_now = amount_paid_now.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
             
             # If payment is close to or equals remaining amount, pay exactly the remaining
             if abs(amount_paid_now - current_remaining) < Decimal('0.01'):
@@ -341,10 +545,17 @@ def record_payment(request, bill_id):
             
             # The save() method will automatically recalculate remaining_amount and status
             bill.save()
+
+            customer = _get_customer_for_bill(
+                bill.customer_phone,
+                bill.customer_email,
+                bill.customer_name
+            )
+            _apply_customer_loyalty(customer, amount_paid_now)
             
             messages.success(request, f'Payment of ₹{amount_paid_now:.2f} recorded successfully')
             return redirect('billing:detail', bill_id=bill_id)
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError, InvalidOperation) as e:
             messages.error(request, f'Invalid payment amount: {str(e)}')
             return redirect('billing:detail', bill_id=bill_id)
     
