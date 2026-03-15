@@ -22,3 +22,7 @@ Customer names :
 
 Add New Customer :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/8f1a314cd367dd9454a5ce8d6d92b7225cd5e7e4/add%20customer%202026-03-15%20175554.png)
+
+
+Daily Sales Report :
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/35e61cca6a33b6e0ddce179533ba9e9a3d20130e/Daily%20sales%20report%202026-03-15%20180240.png)
