@@ -11,6 +11,9 @@ Add Product :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/3800af30eca09fc9484e32f7f495b17906828152/Add%20product%202%202026-03-15%20174235.png)
 
 
+Daily Sales Customer Report:
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/5f4ebfa1f643bfd08069ef166d42f18ac464a959/daily%20sales%202026-03-15%20180335.png)
+
 Display Bills :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/592bdc6798a063f828f3731417a5d978cd4bc598/bills%202026-03-15%20174911.png)
 
