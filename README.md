@@ -33,3 +33,7 @@ Daily Sales Customer Report:
 
 Sales Range report :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/9c75f5943c907db4bd24298326890ac9c3770fe7/Sales%20range%20reportt%202026-03-15%20181027.png)
+
+
+Inventory Reports:
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/917a70e793e2861c25d566a4b799242b1c99207a/inventory%20reports%202026-03-15%20181419.png)
