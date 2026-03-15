@@ -9,3 +9,7 @@ Add Product :
 
 
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/3800af30eca09fc9484e32f7f495b17906828152/Add%20product%202%202026-03-15%20174235.png)
+
+
+Display Bills :
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/592bdc6798a063f828f3731417a5d978cd4bc598/bills%202026-03-15%20174911.png)
