@@ -16,3 +16,6 @@ Display Bills :
 
 Creating Bills :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/ec0468269f91db904366750134fe66f78c151e52/bills%20creating%202026-03-15%20175009.png)
+
+Customer names :
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/fce0ee044c4c95e5a00b20f87adff626de43915b/customer%202026-03-15%20175511.png)
