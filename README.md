@@ -6,3 +6,6 @@ Dashboard of grocery Application :
 
 Add Product :
 ![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/282a242d54ce6346e3826b166b70b37122225ff3/Add%20product%2012026-03-15%20174137.png)
+
+
+![image Alt](https://github.com/VishalVilasBhadargade/GroceryBillingSystem/blob/3800af30eca09fc9484e32f7f495b17906828152/Add%20product%202%202026-03-15%20174235.png)
