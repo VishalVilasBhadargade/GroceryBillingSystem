@@ -2,5 +2,5 @@ services:
   - type: web
     name: grocery-app
     env: python
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "pip install -r backend/requirements.txt""
     startCommand: "gunicorn config.wsgi:application"
