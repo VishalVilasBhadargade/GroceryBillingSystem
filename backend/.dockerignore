@@ -1,0 +1,12 @@
+target/
+.git/
+.gitignore
+.mvn/
+.idea/
+.vscode/
+logs/
+*.log
+README.md
+COMPILATION_FIXES_SUMMARY.md
+error.log
+startup.log

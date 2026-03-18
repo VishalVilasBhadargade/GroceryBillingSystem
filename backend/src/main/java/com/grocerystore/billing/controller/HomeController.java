@@ -1,7 +1,9 @@
-@RestController
+package com.grocerystore.billing.controller;
+
+@org.springframework.web.bind.annotation.RestController
 public class HomeController {
 
-    @GetMapping("/")
+    @org.springframework.web.bind.annotation.GetMapping("/")
     public String home() {
         return "App Running Successfully";
     }
