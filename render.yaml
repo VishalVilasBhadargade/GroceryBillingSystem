@@ -2,5 +2,6 @@ services:
   - type: web
     name: grocery-app
     env: python
-    buildCommand: "pip install -r backend/requirements.txt""
-    startCommand: "gunicorn config.wsgi:application"
+    buildCommand: "pip install -r frontend/requirements.txt"
+    startCommand: "gunicorn --chdir frontend config.wsgi:application"
+    healthCheckPath: "/auth/login/"
