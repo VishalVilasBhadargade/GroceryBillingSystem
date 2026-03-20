@@ -2,6 +2,11 @@ services:
   - type: web
     name: grocery-app
     env: python
-    buildCommand: "pip install -r frontend/requirements.txt"
-    startCommand: "gunicorn --chdir frontend config.wsgi:application"
+    buildCommand: "pip install -r frontend/requirements.txt && python frontend/manage.py collectstatic --noinput"
+    startCommand: "python frontend/manage.py migrate && gunicorn --chdir frontend config.wsgi:application --bind 0.0.0.0:$PORT"
     healthCheckPath: "/auth/login/"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,localhost,127.0.0.1"
