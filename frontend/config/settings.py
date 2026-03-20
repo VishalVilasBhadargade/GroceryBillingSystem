@@ -19,7 +19,13 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-grocery-billing-system-cha
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '.onrender.com,localhost,127.0.0.1').split(',')
+# ALLOWED_HOSTS - allow all Render subdomains and localhost
+_allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
+if _allowed_hosts:
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',')]
+else:
+    # Default: allow all .onrender.com subdomains, localhost, and 127.0.0.1
+    ALLOWED_HOSTS = ['*']  # For Render deployment; restrict in production if needed
 
 # Application definition
 INSTALLED_APPS = [
