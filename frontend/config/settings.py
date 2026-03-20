@@ -21,11 +21,14 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS - allow all Render subdomains and localhost
 _allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
+_default_allowed_hosts = ['.onrender.com', 'grocerybillingsystem.onrender.com', 'localhost', '127.0.0.1']
 if _allowed_hosts:
-    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',')]
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',') if h.strip()]
+    for _host in _default_allowed_hosts:
+        if _host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_host)
 else:
-    # Default: allow all .onrender.com subdomains, localhost, and 127.0.0.1
-    ALLOWED_HOSTS = ['*']  # For Render deployment; restrict in production if needed
+    ALLOWED_HOSTS = _default_allowed_hosts
 
 # Application definition
 INSTALLED_APPS = [
