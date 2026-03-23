@@ -90,6 +90,44 @@
 </div>
 
 <div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Date-wise Product Sales</h5>
+            </div>
+            <div class="card-body">
+                {% if report.date_wise_sales %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Total Quantity Sold</th>
+                                <th>Unique Products</th>
+                                <th>Total Bills</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in report.date_wise_sales %}
+                            <tr>
+                                <td>{{ day.date|date:'Y-m-d' }}</td>
+                                <td>{{ day.total_quantity }}</td>
+                                <td>{{ day.unique_products }}</td>
+                                <td>{{ day.total_bills }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No date-wise product sales found for the selected period</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">

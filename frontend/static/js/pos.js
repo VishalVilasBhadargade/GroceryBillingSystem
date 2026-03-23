@@ -680,7 +680,7 @@ function showKeyboardHelp() {
                                     <td>Focus on product search</td>
                                 </tr>
                                 <tr>
-                                    <td><kbd>↑</kbd> <kbd>↓</kbd></td>
+                                    <td><kbd>Tab</kbd> / <kbd>Shift</kbd> + <kbd>Tab</kbd></td>
                                     <td>Navigate search results</td>
                                 </tr>
                                 <tr>

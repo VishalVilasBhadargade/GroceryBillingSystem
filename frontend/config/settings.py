@@ -17,7 +17,13 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-grocery-billing-system-cha
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# ALLOWED_HOSTS - allow all Render subdomains and localhost
+_allowed_hosts = os.getenv('ALLOWED_HOSTS', '')
+if _allowed_hosts:
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',')]
+else:
+    # Default: allow all .onrender.com subdomains, localhost, and 127.0.0.1
+    ALLOWED_HOSTS = ['*']  # For Render deployment; restrict in production if needed
 
 # Application definition
 INSTALLED_APPS = [
@@ -116,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
@@ -204,6 +210,12 @@ LOGGING = {
 # Backend API Configuration
 BACKEND_API_URL = os.getenv('BACKEND_API_URL', 'http://localhost:8080/api/v1')
 BACKEND_API_TIMEOUT = int(os.getenv('BACKEND_API_TIMEOUT', '10'))
+
+# Twilio Configuration (for SMS/WhatsApp reminders)
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
+TWILIO_WHATSAPP_FROM = os.getenv('TWILIO_WHATSAPP_FROM')
 
 # Security Settings (Production)
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'

@@ -1,7 +1,8 @@
 """
 Management command to send payment reminders to customers with pending/partial payments
 Run with: python manage.py send_payment_reminders
-Run with SMS: python manage.py send_payment_reminders --use-sms
+Run with WhatsApp: python manage.py send_payment_reminders --channel whatsapp
+Run with SMS: python manage.py send_payment_reminders --channel sms
 """
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -10,133 +11,161 @@ from datetime import timedelta
 from apps.billing.models import Bill, PaymentReminder
 from apps.customers.models import Customer
 import logging
+import importlib.util
+import importlib
+from urllib.parse import quote
 
 logger = logging.getLogger(__name__)
 
-# Try to import Twilio, but make it optional
 try:
-    from twilio.rest import Client
-    TWILIO_AVAILABLE = True
-except ImportError:
+    TWILIO_AVAILABLE = importlib.util.find_spec('twilio.rest') is not None
+except ModuleNotFoundError:
     TWILIO_AVAILABLE = False
 
 
 class Command(BaseCommand):
-    help = 'Send payment reminders to customers with unpaid bills older than 7 days'
+    help = 'Send recurring reminders for unpaid bills. Default: WhatsApp every 2 days until payment is complete.'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--days',
             type=int,
-            default=7,
-            help='Number of days to check for unpaid bills (default: 7)',
+            default=0,
+            help='Only include bills older than these many days (default: 0)',
         )
         parser.add_argument(
-            '--use-sms',
+            '--interval-days',
+            type=int,
+            default=2,
+            help='Minimum gap between reminders for the same bill (default: 2)',
+        )
+        parser.add_argument(
+            '--channel',
+            choices=['whatsapp', 'sms', 'log'],
+            default='whatsapp',
+            help='Delivery channel: whatsapp (default), sms, or log',
+        )
+        parser.add_argument(
+            '--dry-run',
             action='store_true',
-            help='Send reminders via SMS (requires Twilio setup)',
+            help='Show which reminders would be sent without sending or creating records',
         )
 
     def handle(self, *args, **options):
         days = options['days']
-        use_sms = options.get('use_sms', False)
+        interval_days = max(1, int(options.get('interval_days', 2)))
+        channel = options.get('channel', 'whatsapp')
+        dry_run = options.get('dry_run', False)
         cutoff_date = timezone.now() - timedelta(days=days)
 
-        # Find bills that are not PAID and created more than 'days' ago
+        # Find bills that are not PAID and created more than 'days' ago.
         unpaid_bills = Bill.objects.filter(
             status__in=['PENDING', 'PARTIAL'],
-            created_at__lte=cutoff_date
+            created_at__lte=cutoff_date,
+            remaining_amount__gt=0
         )
 
-        self.stdout.write(f"Found {unpaid_bills.count()} unpaid bills older than {days} days")
+        self.stdout.write(
+            f"Found {unpaid_bills.count()} unpaid bills older than {days} days "
+            f"for channel '{channel}' (interval: {interval_days} days)"
+        )
 
-        if use_sms and not TWILIO_AVAILABLE:
-            self.stdout.write(
-                self.style.ERROR('Twilio not installed. Install with: pip install twilio')
-            )
-            use_sms = False
+        if channel in ('sms', 'whatsapp') and not TWILIO_AVAILABLE:
+            self.stdout.write(self.style.ERROR('Twilio not installed. Install with: pip install twilio'))
+            return
 
         reminder_count = 0
+        skipped_recent = 0
+        failed_count = 0
+
         for bill in unpaid_bills:
-            # Check if we already sent a reminder in the last 2 days
+            # Check if we already sent a reminder recently.
             last_reminder = PaymentReminder.objects.filter(
                 bill=bill,
                 status='SENT'
             ).order_by('-sent_at').first()
 
-            if last_reminder and (timezone.now() - last_reminder.sent_at) < timedelta(days=2):
+            if last_reminder and (timezone.now() - last_reminder.sent_at) < timedelta(days=interval_days):
                 self.stdout.write(
                     self.style.WARNING(
                         f"Bill #{bill.id}: Reminder already sent recently, skipping"
                     )
                 )
+                skipped_recent += 1
                 continue
 
-            # Calculate remaining amount
-            remaining_amount = bill.total - bill.amount_paid
+            remaining_amount = bill.remaining_amount
+            if remaining_amount <= 0:
+                continue
 
-            # Create reminder message
             message = self._generate_message(bill, remaining_amount)
 
-            # Create or update reminder record
-            reminder, created = PaymentReminder.objects.get_or_create(
+            if dry_run:
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"[DRY RUN] Would send {channel} reminder for Bill #{bill.id} "
+                        f"(Customer: {bill.customer_name}, Amount: Rs.{remaining_amount:.2f})"
+                    )
+                )
+                reminder_count += 1
+                continue
+
+            reminder = PaymentReminder.objects.create(
                 bill=bill,
+                customer_phone=bill.customer_phone,
+                customer_email=bill.customer_email,
+                outstanding_amount=remaining_amount,
+                message=message,
                 status='PENDING',
-                defaults={
-                    'customer_phone': bill.customer_phone,
-                    'customer_email': bill.customer_email,
-                    'outstanding_amount': remaining_amount,
-                    'message': message
-                }
             )
 
-            if created:
-                # Send the reminder
-                self._send_reminder(reminder, use_sms)
+            self._send_reminder(reminder, channel=channel)
+
+            if reminder.status == 'SENT':
                 reminder_count += 1
-                
-                if reminder.status == 'SENT':
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"✓ Reminder sent for Bill #{bill.id} - "
-                            f"Customer: {bill.customer_name}, Amount: ₹{remaining_amount:.2f}"
-                        )
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"OK Reminder sent for Bill #{bill.id} - "
+                        f"Customer: {bill.customer_name}, Amount: Rs.{remaining_amount:.2f}"
                     )
-                else:
-                    self.stdout.write(
-                        self.style.ERROR(
-                            f"✗ Failed to send reminder for Bill #{bill.id}"
-                        )
+                )
+            else:
+                failed_count += 1
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"FAIL Failed to send reminder for Bill #{bill.id}"
                     )
+                )
 
         self.stdout.write(
-            self.style.SUCCESS(f"\n{reminder_count} reminders processed!")
+            self.style.SUCCESS(
+                f"\nProcessed: sent={reminder_count}, skipped_recent={skipped_recent}, failed={failed_count}"
+            )
         )
 
     def _generate_message(self, bill, remaining_amount):
         """Generate reminder message"""
-        return f"""Dear {bill.customer_name},
+        created_local = timezone.localtime(bill.created_at)
+        customer_name = bill.customer_name or 'Customer'
+        return (
+            f"Dear {customer_name},\n\n"
+            f"Payment reminder for Bill #{bill.id}.\n"
+            f"Outstanding amount: Rs.{remaining_amount:.2f}\n"
+            f"Bill date: {created_local.strftime('%d-%m-%Y %H:%M')}\n"
+            f"Total: Rs.{bill.total:.2f} | Paid: Rs.{bill.amount_paid:.2f}\n\n"
+            f"Please settle at your earliest convenience.\n"
+            f"Thank you,\nShri Saikripa Kirana"
+        )
 
-This is a reminder: Your bill #{bill.id} has an outstanding amount of ₹{remaining_amount:.2f}.
-
-Bill Details:
-- Total: ₹{bill.total:.2f}
-- Paid: ₹{bill.amount_paid:.2f}
-- Outstanding: ₹{remaining_amount:.2f}
-- Created: {bill.created_at.strftime('%d-%m-%Y')}
-
-Please settle at your earliest convenience.
-
-Thank you,
-Grocery Billing System"""
-
-    def _send_reminder(self, reminder, use_sms=False):
-        """Send reminder via SMS or logging"""
+    def _send_reminder(self, reminder, channel='whatsapp'):
+        """Send reminder via selected channel."""
         try:
-            if use_sms and TWILIO_AVAILABLE and reminder.customer_phone:
+            if channel == 'sms' and reminder.customer_phone:
                 self._send_sms(reminder)
+            elif channel == 'whatsapp' and reminder.customer_phone:
+                self._send_whatsapp(reminder)
             else:
-                # Log the reminder (for testing/logging)
+                # Log fallback when no external provider is configured.
                 self._log_reminder(reminder)
                 
         except Exception as e:
@@ -147,6 +176,9 @@ Grocery Billing System"""
     def _send_sms(self, reminder):
         """Send SMS via Twilio"""
         try:
+            client_module = importlib.import_module('twilio.rest')
+            client_cls = getattr(client_module, 'Client')
+
             # Get Twilio credentials from settings
             account_sid = getattr(settings, 'TWILIO_ACCOUNT_SID', None)
             auth_token = getattr(settings, 'TWILIO_AUTH_TOKEN', None)
@@ -155,7 +187,7 @@ Grocery Billing System"""
             if not all([account_sid, auth_token, from_number]):
                 raise ValueError('Twilio credentials not configured in settings')
 
-            client = Client(account_sid, auth_token)
+            client = client_cls(account_sid, auth_token)
             
             # Format message for SMS (shorter version)
             sms_message = (
@@ -185,12 +217,54 @@ Grocery Billing System"""
             reminder.save()
             raise
 
+    def _send_whatsapp(self, reminder):
+        """Send WhatsApp reminder via Twilio WhatsApp API."""
+        try:
+            client_module = importlib.import_module('twilio.rest')
+            client_cls = getattr(client_module, 'Client')
+
+            account_sid = getattr(settings, 'TWILIO_ACCOUNT_SID', None)
+            auth_token = getattr(settings, 'TWILIO_AUTH_TOKEN', None)
+            from_whatsapp = getattr(settings, 'TWILIO_WHATSAPP_FROM', None)
+
+            if not all([account_sid, auth_token, from_whatsapp]):
+                raise ValueError('Twilio WhatsApp credentials not configured in settings')
+
+            phone_digits = ''.join(ch for ch in (reminder.customer_phone or '') if ch.isdigit())
+            if len(phone_digits) == 10:
+                phone_digits = f"91{phone_digits}"
+            if not phone_digits:
+                raise ValueError('Customer phone is missing or invalid')
+
+            client = client_cls(account_sid, auth_token)
+            message = client.messages.create(
+                body=reminder.message,
+                from_=from_whatsapp,
+                to=f"whatsapp:+{phone_digits}",
+            )
+
+            reminder.status = 'SENT'
+            reminder.sent_at = timezone.now()
+            reminder.save(update_fields=['status', 'sent_at', 'updated_at'])
+            logger.info(f"WhatsApp reminder sent successfully for Bill #{reminder.bill.id}: {message.sid}")
+
+        except Exception as e:
+            logger.error(f"WhatsApp sending failed: {str(e)}")
+            reminder.status = 'FAILED'
+            reminder.save(update_fields=['status', 'updated_at'])
+            raise
+
     def _log_reminder(self, reminder):
         """Log reminder (for testing when SMS is not available)"""
         try:
             reminder.status = 'SENT'
             reminder.sent_at = timezone.now()
-            reminder.save()
+            wa_phone = ''.join(ch for ch in (reminder.customer_phone or '') if ch.isdigit())
+            if len(wa_phone) == 10:
+                wa_phone = f"91{wa_phone}"
+            wa_link = f"https://wa.me/{wa_phone}?text={quote(reminder.message)}" if wa_phone else 'N/A'
+
+            reminder.save(update_fields=['status', 'sent_at', 'updated_at'])
             
             # Log to file/console
             log_message = f"""
@@ -198,7 +272,8 @@ Grocery Billing System"""
             Bill ID: {reminder.bill.id}
             Customer: {reminder.bill.customer_name}
             Phone: {reminder.customer_phone}
-            Outstanding Amount: ₹{reminder.outstanding_amount:.2f}
+            Outstanding Amount: Rs.{reminder.outstanding_amount:.2f}
+            WhatsApp Link: {wa_link}
             
             Message:
             {reminder.message}

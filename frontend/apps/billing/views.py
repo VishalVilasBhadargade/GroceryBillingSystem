@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.utils import timezone
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 from urllib.parse import quote
 from apps.core.decorators import login_required_custom, role_required
@@ -137,11 +138,13 @@ def _build_whatsapp_receipt_url(bill):
 
     product_list_text = "\n".join(item_lines) if item_lines else "- वस्तू उपलब्ध नाहीत"
 
+    bill_created_at_local = timezone.localtime(bill.created_at)
+
     message = (
         f"नमस्कार {customer_name},\n"
         f"श्री साईकृपा किराणा कडून आपली बिल पावती:\n"
         f"बिल क्रमांक: {bill.id}\n"
-        f"दिनांक: {bill.created_at.strftime('%d/%m/%Y %H:%M')}\n"
+        f"दिनांक: {bill_created_at_local.strftime('%d/%m/%Y %H:%M')}\n"
         f"वस्तूंची यादी:\n{product_list_text}\n"
         f"एकूण रक्कम: रु. {bill.total:.2f}\n"
         f"भरलेली रक्कम: रु. {bill.amount_paid:.2f}\n"
@@ -356,10 +359,12 @@ def print_receipt_pdf(request, bill_id):
     """Return printable PDF receipt for a bill."""
     bill = get_object_or_404(Bill, pk=bill_id)
 
+    bill_created_at_local = timezone.localtime(bill.created_at)
+
     lines = [
         "Shri Saikripa Kirana - Receipt",
         f"Bill #: {bill.id}",
-        f"Date: {bill.created_at.strftime('%d/%m/%Y %H:%M')}",
+        f"Date: {bill_created_at_local.strftime('%d/%m/%Y %H:%M')}",
         f"Customer: {bill.customer_name or 'Walk-in Customer'}",
         "----------------------------------------",
     ]

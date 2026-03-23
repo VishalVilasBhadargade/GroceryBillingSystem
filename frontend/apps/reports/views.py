@@ -3,7 +3,8 @@ Reporting and analytics views
 """
 from django.shortcuts import render
 from django.contrib import messages
-from django.db.models import Sum, Count, F
+from django.db.models import Sum, Count, F, Max
+from django.db.models.functions import TruncDate
 from apps.core.decorators import login_required_custom, role_required
 from apps.billing.models import Bill, BillItem
 from apps.products.models import Product
@@ -64,7 +65,7 @@ def daily_sales_report(request):
 @login_required_custom
 @role_required('MANAGER', 'ACCOUNTANT', 'ADMIN')
 def sales_range_report(request):
-    """Sales report for date range"""
+    """Stock intake report for date range"""
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     
@@ -78,24 +79,53 @@ def sales_range_report(request):
         try:
             start = datetime.strptime(start_date, '%Y-%m-%d').date()
             end = datetime.strptime(end_date, '%Y-%m-%d').date()
-            
-            bills = Bill.objects.filter(created_at__date__gte=start, created_at__date__lte=end, status='PAID')
-            total_revenue = bills.aggregate(total=Sum('total'))['total'] or 0
-            total_bills = bills.count()
-            total_items = BillItem.objects.filter(bill__in=bills).aggregate(total=Sum('quantity'))['total'] or 0
-            average_bill = total_revenue / total_bills if total_bills > 0 else 0
-            
-            top_products = BillItem.objects.filter(bill__in=bills).values('product_name').annotate(
-                total_quantity=Sum('quantity'),
-                total_revenue=Sum('total_price')
+
+            products_added = Product.objects.filter(
+                created_at__date__gte=start,
+                created_at__date__lte=end
+            )
+
+            total_products_added = products_added.count()
+            total_quantity_added = products_added.aggregate(total=Sum('quantity_on_hand'))['total'] or 0
+            total_stock_value = products_added.aggregate(
+                total=Sum(F('quantity_on_hand') * F('cost_price'))
+            )['total'] or 0
+            average_quantity_per_product = (
+                total_quantity_added / total_products_added if total_products_added > 0 else 0
+            )
+
+            top_products = products_added.values('product_name').annotate(
+                total_quantity=Sum('quantity_on_hand'),
+                total_value=Sum(F('quantity_on_hand') * F('cost_price')),
+                last_added_date=Max('created_at__date')
             ).order_by('-total_quantity')[:10]
+
+            date_wise_intake = products_added.annotate(
+                date=F('created_at__date')
+            ).values('date').annotate(
+                total_products=Count('id'),
+                total_quantity=Sum('quantity_on_hand'),
+                total_value=Sum(F('quantity_on_hand') * F('cost_price'))
+            ).order_by('date')
+
+            products_datewise = products_added.annotate(
+                date=TruncDate('created_at'),
+                stock_value=F('quantity_on_hand') * F('cost_price')
+            ).values(
+                'date',
+                'product_name',
+                'quantity_on_hand',
+                'stock_value'
+            ).order_by('-date', 'product_name')
             
             context['report'] = {
-                'total_revenue': total_revenue,
-                'total_bills': total_bills,
-                'total_items': total_items,
-                'average_bill': average_bill,
+                'total_stock_value': total_stock_value,
+                'total_products_added': total_products_added,
+                'total_quantity_added': total_quantity_added,
+                'average_quantity_per_product': average_quantity_per_product,
                 'top_products': top_products,
+                'date_wise_intake': date_wise_intake,
+                'products_datewise': products_datewise,
             }
         except Exception as e:
             logger.error(f"Error generating sales range report: {e}")
@@ -152,6 +182,14 @@ def product_sales_report(request):
             
             top_by_quantity = products.order_by('-total_quantity')[:10]
             top_by_revenue = products.order_by('-total_revenue')[:10]
+
+            date_wise_sales = BillItem.objects.filter(bill__in=bills).annotate(
+                date=F('bill__created_at__date')
+            ).values('date').annotate(
+                total_quantity=Sum('quantity'),
+                total_bills=Count('bill', distinct=True),
+                unique_products=Count('product_name', distinct=True)
+            ).order_by('date')
             
             total_quantity = sum(p['total_quantity'] for p in products)
             total_revenue = sum(p['total_revenue'] for p in products)
@@ -160,6 +198,7 @@ def product_sales_report(request):
                 'products': products,
                 'top_by_quantity': top_by_quantity,
                 'top_by_revenue': top_by_revenue,
+                'date_wise_sales': date_wise_sales,
                 'total_quantity': total_quantity,
                 'total_revenue': total_revenue,
             }
